@@ -1,0 +1,23 @@
+language: java
+
+jdk:
+  - oraclejdk11
+
+notifications:
+  email: korzepadawid@yahoo.com
+
+services:
+  - postgresql
+
+before_install:
+  - chmod +x ./gradlew
+
+before_script:
+  - psql -c 'create database db;' -U postgres
+
+env:
+  global:
+    - PGUSER=postgres
+    - PGPORT=5432
+
+script: ./gradlew check
