@@ -20,4 +20,9 @@ env:
     - PGUSER=postgres
     - PGPORT=5432
 
-script: ./gradlew clean test
+script:
+  - ./gradlew check
+  - ./gradlew jacocoTestReport
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
