@@ -20,4 +20,4 @@ env:
     - PGUSER=postgres
     - PGPORT=5432
 
-script: ./gradlew check
+script: ./gradlew clean test
