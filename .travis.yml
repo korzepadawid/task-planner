@@ -20,14 +20,9 @@ env:
     - PGUSER=postgres
     - PGPORT=5432
 
-jobs:
-  include:
-    - stage: test
-      script: ./gradlew check
-    - stage: report
-      script: ./gradlew jacocoTestReport
-    - stage: build
-      script: ./gradlew build
+script:
+  - ./gradlew check
+  - ./gradlew jacocoTestReport
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
