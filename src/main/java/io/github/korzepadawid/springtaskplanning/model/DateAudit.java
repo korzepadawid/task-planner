@@ -7,7 +7,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
 @Embeddable
-public class DateAudit implements Serializable {
+public class DateAudit {
 
   private ZonedDateTime updatedAt;
   private ZonedDateTime createdAt;
