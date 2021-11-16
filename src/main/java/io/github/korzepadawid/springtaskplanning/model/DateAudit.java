@@ -1,6 +1,5 @@
 package io.github.korzepadawid.springtaskplanning.model;
 
-import java.io.Serializable;
 import java.time.ZonedDateTime;
 import javax.persistence.Embeddable;
 import javax.persistence.PrePersist;
