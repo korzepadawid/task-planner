@@ -1,10 +1,10 @@
-package io.github.korzepadawid.springtaskplanning.factory;
+package io.github.korzepadawid.springtaskplanning.util;
 
 import io.github.korzepadawid.springtaskplanning.dto.AuthRegisterRequest;
 import io.github.korzepadawid.springtaskplanning.model.AuthProvider;
 import io.github.korzepadawid.springtaskplanning.model.User;
 
-public class UserFactory {
+public abstract class UserFactory {
 
   public static User getUser(AuthProvider authProvider) {
     User user = new User();

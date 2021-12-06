@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 import io.github.korzepadawid.springtaskplanning.dto.AuthRegisterRequest;
 import io.github.korzepadawid.springtaskplanning.dto.UserResponse;
 import io.github.korzepadawid.springtaskplanning.exception.UserAlreadyExistsException;
-import io.github.korzepadawid.springtaskplanning.factory.UserFactory;
+import io.github.korzepadawid.springtaskplanning.util.UserFactory;
 import io.github.korzepadawid.springtaskplanning.model.AuthProvider;
 import io.github.korzepadawid.springtaskplanning.model.User;
 import io.github.korzepadawid.springtaskplanning.repository.UserRepository;
