@@ -18,27 +18,22 @@ import javax.validation.constraints.Size;
 @Table(name = "users")
 public class User extends AbstractBaseEntity {
 
+  @Embedded private final DateAudit dateAudit = new DateAudit();
   @NotBlank
   @Size(min = 3, max = 255)
   private String name;
-
   @Email
   @NotBlank
   @Column(unique = true)
   @Size(min = 3, max = 320)
   private String email;
-
   @NotBlank
   @Size(max = 72)
   private String password;
-
   @Enumerated(EnumType.STRING)
   private AuthProvider authProvider;
-
   @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
   private Avatar avatar;
-
-  @Embedded private final DateAudit dateAudit = new DateAudit();
 
   public User() {}
 

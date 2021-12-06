@@ -46,23 +46,22 @@ public class UserPrincipal implements UserDetails {
     this.email = email;
   }
 
-  public void setPassword(String password) {
-    this.password = password;
-  }
-
-  public void setAuthorities(
-      Collection<? extends GrantedAuthority> authorities) {
-    this.authorities = authorities;
-  }
-
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return authorities;
   }
 
+  public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
+    this.authorities = authorities;
+  }
+
   @Override
   public String getPassword() {
     return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
   }
 
   @Override

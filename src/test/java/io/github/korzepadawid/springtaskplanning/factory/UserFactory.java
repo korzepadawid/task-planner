@@ -11,10 +11,13 @@ public class UserFactory {
     user.setName("billmurray");
     user.setEmail("billmurray@gmail.com");
     user.setAuthProvider(authProvider);
+
     if (authProvider.equals(AuthProvider.LOCAL)) {
       user.setPassword("p@s5w0rD!@3");
     }
+
     user.setId(100L);
+
     return user;
   }
 
@@ -24,6 +27,7 @@ public class UserFactory {
     authRegisterRequest.setName(user.getName());
     authRegisterRequest.setEmail(user.getEmail());
     authRegisterRequest.setPassword(user.getPassword());
+
     return authRegisterRequest;
   }
 }
