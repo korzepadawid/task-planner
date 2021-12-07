@@ -10,9 +10,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/api/v1/auth")
 public class AuthController {
 
   private final AuthService authService;
@@ -21,13 +23,13 @@ public class AuthController {
     this.authService = authService;
   }
 
-  @PostMapping("/api/v1/auth/register")
+  @PostMapping("/register")
   public ResponseEntity<UserResponse> register(
       @Valid @RequestBody AuthRegisterRequest authRegisterRequest) {
     return new ResponseEntity<>(authService.register(authRegisterRequest), HttpStatus.CREATED);
   }
 
-  @PostMapping("/api/v1/auth/login")
+  @PostMapping("/login")
   public ResponseEntity<AuthLoginResponse> login(
       @Valid @RequestBody AuthLoginRequest authLoginRequest) {
     return new ResponseEntity<>(authService.login(authLoginRequest), HttpStatus.OK);
