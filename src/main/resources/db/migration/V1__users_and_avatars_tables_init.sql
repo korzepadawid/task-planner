@@ -14,12 +14,11 @@ CREATE TABLE users
 
 CREATE TABLE avatars
 (
-    id         BIGSERIAL PRIMARY KEY NOT NULL,
-    uuid       VARCHAR(100) UNIQUE   NOT NULL,
-    photo      BYTEA,
-    user_id    BIGINT UNIQUE         NOT NULL,
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP,
+    id          BIGSERIAL PRIMARY KEY NOT NULL,
+    storage_key VARCHAR(255),
+    user_id     BIGINT UNIQUE         NOT NULL,
+    created_at  TIMESTAMP DEFAULT NOW(),
+    updated_at  TIMESTAMP,
     CONSTRAINT fk_user
         FOREIGN KEY (user_id) REFERENCES users (id)
 );
