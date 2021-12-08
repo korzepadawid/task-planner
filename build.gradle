@@ -20,6 +20,8 @@ repositories {
 }
 
 dependencies {
+    implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.1000')
+    implementation 'com.amazonaws:aws-java-sdk-s3'
     implementation 'javax.xml.bind:jaxb-api:2.2.4'
     implementation 'com.auth0:java-jwt:3.18.2'
     implementation 'org.flywaydb:flyway-core'
