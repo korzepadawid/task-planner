@@ -8,4 +8,6 @@ public interface StorageService {
   String uploadPhoto(MultipartFile file) throws IOException;
 
   void replacePhoto(String storageKey, MultipartFile file);
+
+  byte[] downloadPhoto(String storageKey);
 }

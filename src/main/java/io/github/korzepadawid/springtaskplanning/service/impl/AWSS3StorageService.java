@@ -2,6 +2,9 @@ package io.github.korzepadawid.springtaskplanning.service.impl;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.amazonaws.util.IOUtils;
 import io.github.korzepadawid.springtaskplanning.config.AWSS3Config;
 import io.github.korzepadawid.springtaskplanning.exception.BusinessLogicException;
 import io.github.korzepadawid.springtaskplanning.service.StorageService;
@@ -44,6 +47,18 @@ public class AWSS3StorageService implements StorageService {
   @Override
   public void replacePhoto(String storageKey, MultipartFile file) {
     putPhoto(storageKey, file);
+  }
+
+  @Override
+  public byte[] downloadPhoto(String storageKey) {
+    S3Object s3Object = amazonS3.getObject(awss3Config.getBucketName(), storageKey);
+    S3ObjectInputStream inputStream = s3Object.getObjectContent();
+    try {
+      return IOUtils.toByteArray(inputStream);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 
   private void putPhoto(String storageKey, MultipartFile multipartFile) {

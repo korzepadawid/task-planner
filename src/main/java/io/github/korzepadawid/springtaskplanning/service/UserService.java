@@ -8,5 +8,7 @@ public interface UserService {
 
   UserResponse findUserByEmail(String email);
 
+  byte[] findAvatarByUserId(Long id);
+
   void setAvatar(String userEmail, MultipartFile file) throws IOException;
 }

@@ -35,6 +35,22 @@ public class UserServiceImpl implements UserService {
     return new UserResponse(findUser(email));
   }
 
+  @Override
+  public byte[] findAvatarByUserId(Long id) {
+    User user =
+        userRepository
+            .findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+    Avatar avatar = user.getAvatar();
+
+    if (avatar == null) {
+      throw new ResourceNotFoundException("Avatar not found");
+    }
+
+    return storageService.downloadPhoto(avatar.getStorageKey());
+  }
+
   /**
    * Only users with local-based authentication can update their avatars. If the avatar's storage
    * key is empty, it will upload a new photo. Otherwise, it will replace an existing object.

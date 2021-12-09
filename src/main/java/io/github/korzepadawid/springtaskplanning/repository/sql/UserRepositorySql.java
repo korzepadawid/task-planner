@@ -7,5 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface UserRepositorySql extends UserRepository, CrudRepository<User, Long> {
 
+  Optional<User> findById(Long id);
+
   Optional<User> findByEmail(String email);
 }
