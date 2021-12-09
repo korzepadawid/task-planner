@@ -31,11 +31,13 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public UserResponse findUserByEmail(String email) {
     return new UserResponse(findUser(email));
   }
 
   @Override
+  @Transactional(readOnly = true)
   public byte[] findAvatarByUserId(Long id) {
     User user =
         userRepository
