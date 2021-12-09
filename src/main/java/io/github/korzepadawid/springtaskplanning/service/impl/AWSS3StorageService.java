@@ -14,6 +14,7 @@ import java.util.Objects;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,55 +34,55 @@ public class AWSS3StorageService implements StorageService {
   }
 
   @Override
-  public String uploadPhoto(MultipartFile multipartFile) throws IOException {
+  public String uploadPhoto(MultipartFile multipartFile) {
+    String storageKey = UUID.randomUUID().toString();
+    putPhoto(storageKey, multipartFile);
+    return storageKey;
+  }
+
+  @Async
+  @Override
+  public void replacePhoto(String storageKey, MultipartFile file) {
+    putPhoto(storageKey, file);
+  }
+
+  private void putPhoto(String storageKey, MultipartFile multipartFile) {
     final List<String> possibleExtensions = Arrays.asList(".jpeg", ".png", ".jpg");
 
     if (multipartFile == null) {
       throw new BusinessLogicException("File doesn't supported");
     }
 
-    String fileExtension =
-        possibleExtensions.stream()
-            .filter(
-                extension -> {
-                  String filename = multipartFile.getOriginalFilename();
-                  return filename != null && filename.endsWith(extension);
-                })
-            .findAny()
-            .orElseThrow(() -> new BusinessLogicException("File doesn't supported"));
+    possibleExtensions.stream()
+        .filter(
+            extension -> {
+              String filename = multipartFile.getOriginalFilename();
+              return filename != null && filename.endsWith(extension);
+            })
+        .findAny()
+        .orElseThrow(() -> new BusinessLogicException("File doesn't supported"));
 
-    File file = convertMultiPartToFile(multipartFile);
+    File file = convertMultiPartFileToFile(multipartFile);
 
     if (file.length() > BYTES_LIMIT) {
       throw new BusinessLogicException("File size too big.");
     }
 
-    String storageKey = UUID.randomUUID() + fileExtension;
-
     try {
       amazonS3.putObject(awss3Config.getBucketName(), storageKey, file);
-      return storageKey;
-
+      file.delete();
     } catch (AmazonServiceException e) {
       log.error("Can't put object to s3 " + e.getErrorMessage());
     }
-
-    throw new BusinessLogicException("Can't put object to s3");
   }
 
-  private File convertMultiPartToFile(MultipartFile file) throws IOException {
-    if (file == null) {
-      return null;
+  private File convertMultiPartFileToFile(MultipartFile file) {
+    File convertedFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
+    try (FileOutputStream fos = new FileOutputStream(convertedFile)) {
+      fos.write(file.getBytes());
+    } catch (IOException e) {
+      log.error("Error converting multipartFile to file", e);
     }
-
-    File convFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
-    FileOutputStream fos = new FileOutputStream(convFile);
-    fos.write(file.getBytes());
-    fos.close();
-
-    return convFile;
+    return convertedFile;
   }
-
-  @Override
-  public void replacePhoto(String storageKey, MultipartFile file) {}
 }
