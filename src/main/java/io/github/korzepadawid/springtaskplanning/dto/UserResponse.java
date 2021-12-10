@@ -8,6 +8,7 @@ public class UserResponse {
   private Long id;
   private String name;
   private String email;
+  private String avatarUrl;
   private String authProvider;
   private ZonedDateTime memberSince;
 
@@ -20,6 +21,11 @@ public class UserResponse {
       this.email = user.getEmail();
       this.authProvider = user.getAuthProvider().toString();
       this.memberSince = user.getDateAudit().getCreatedAt();
+      if (user.getAvatar() == null) {
+        this.avatarUrl = null;
+      } else {
+        this.avatarUrl = "/api/v1/users/" + id + "/avatar";
+      }
     }
   }
 
@@ -61,5 +67,13 @@ public class UserResponse {
 
   public void setMemberSince(ZonedDateTime memberSince) {
     this.memberSince = memberSince;
+  }
+
+  public String getAvatarUrl() {
+    return avatarUrl;
+  }
+
+  public void setAvatarUrl(String avatarUrl) {
+    this.avatarUrl = avatarUrl;
   }
 }

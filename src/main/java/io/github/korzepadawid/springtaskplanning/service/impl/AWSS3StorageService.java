@@ -11,13 +11,11 @@ import io.github.korzepadawid.springtaskplanning.service.StorageService;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
+import java.util.Locale;
 import java.util.Objects;
-import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,69 +24,68 @@ public class AWSS3StorageService implements StorageService {
 
   Logger log = LoggerFactory.getLogger(AWSS3StorageService.class);
 
-  private final AWSS3Config awss3Config;
-  private final AmazonS3 amazonS3;
+  private final AWSS3Config s3Config;
+  private final AmazonS3 s3;
 
-  public static final long BYTES_LIMIT = 1000000;
-
-  public AWSS3StorageService(AWSS3Config awss3Config, AmazonS3 amazonS3) {
-    this.awss3Config = awss3Config;
-    this.amazonS3 = amazonS3;
+  public AWSS3StorageService(AWSS3Config s3Config, AmazonS3 s3) {
+    this.s3Config = s3Config;
+    this.s3 = s3;
   }
 
   @Override
-  public String uploadPhoto(MultipartFile multipartFile) {
-    String storageKey = UUID.randomUUID().toString();
-    putPhoto(storageKey, multipartFile);
-    return storageKey;
-  }
+  public void putFile(
+      MultipartFile multipartFile,
+      Collection<String> extensions,
+      int maxLimitInBytes,
+      String storageKey) {
 
-  @Async
-  @Override
-  public void replacePhoto(String storageKey, MultipartFile file) {
-    putPhoto(storageKey, file);
-  }
+    if (!isValidExtension(multipartFile, extensions)) {
+      throw new BusinessLogicException("File not supported.");
+    }
 
-  @Override
-  public byte[] downloadPhoto(String storageKey) {
-    S3Object s3Object = amazonS3.getObject(awss3Config.getBucketName(), storageKey);
-    S3ObjectInputStream inputStream = s3Object.getObjectContent();
+    File file = convertMultiPartFileToFile(multipartFile);
+
+    if (!isValidSize(file, maxLimitInBytes)) {
+      throw new BusinessLogicException("File not supported.");
+    }
+
     try {
+      s3.putObject(s3Config.getBucketName(), storageKey, file);
+      file.delete();
+    } catch (AmazonServiceException e) {
+      log.error("Can't put file.");
+    }
+  }
+
+  @Override
+  public byte[] downloadFile(String storageKey) {
+    try {
+      S3Object s3Object = s3.getObject(s3Config.getBucketName(), storageKey);
+      S3ObjectInputStream inputStream = s3Object.getObjectContent();
       return IOUtils.toByteArray(inputStream);
+    } catch (AmazonServiceException e) {
+      log.error("Can't download {}", storageKey);
     } catch (IOException e) {
-      e.printStackTrace();
+      log.error("Can't download file.");
     }
     return null;
   }
 
-  private void putPhoto(String storageKey, MultipartFile multipartFile) {
-    final List<String> possibleExtensions = Arrays.asList(".jpeg", ".png", ".jpg");
+  private Boolean isValidSize(File file, int maxLimitInBytes) {
+    return file.length() <= maxLimitInBytes;
+  }
 
-    if (multipartFile == null) {
-      throw new BusinessLogicException("File doesn't supported");
-    }
-
-    possibleExtensions.stream()
-        .filter(
+  private Boolean isValidExtension(MultipartFile multipartFile, Collection<String> extensions) {
+    return extensions.stream()
+        .anyMatch(
             extension -> {
-              String filename = multipartFile.getOriginalFilename();
-              return filename != null && filename.endsWith(extension);
-            })
-        .findAny()
-        .orElseThrow(() -> new BusinessLogicException("File doesn't supported"));
-
-    File file = convertMultiPartFileToFile(multipartFile);
-
-    if (file.length() > BYTES_LIMIT) {
-      throw new BusinessLogicException("File size too big.");
-    }
-
-    try {
-      amazonS3.putObject(awss3Config.getBucketName(), storageKey, file);
-      file.delete();
-    } catch (AmazonServiceException e) {
-      log.error("Can't put object to s3 " + e.getErrorMessage());
-    }
+              if (!multipartFile.isEmpty()) {
+                return Objects.requireNonNull(multipartFile.getOriginalFilename())
+                    .toLowerCase(Locale.ROOT)
+                    .endsWith(extension.toLowerCase(Locale.ROOT));
+              }
+              return false;
+            });
   }
 
   private File convertMultiPartFileToFile(MultipartFile file) {
@@ -96,7 +93,7 @@ public class AWSS3StorageService implements StorageService {
     try (FileOutputStream fos = new FileOutputStream(convertedFile)) {
       fos.write(file.getBytes());
     } catch (IOException e) {
-      log.error("Error converting multipartFile to file", e);
+      log.error("Error converting multipartFile to file");
     }
     return convertedFile;
   }
