@@ -1,7 +1,9 @@
 package io.github.korzepadawid.springtaskplanning.service.impl;
 
 import io.github.korzepadawid.springtaskplanning.dto.UserResponse;
+import io.github.korzepadawid.springtaskplanning.exception.BusinessLogicException;
 import io.github.korzepadawid.springtaskplanning.exception.ResourceNotFoundException;
+import io.github.korzepadawid.springtaskplanning.model.AuthProvider;
 import io.github.korzepadawid.springtaskplanning.model.Avatar;
 import io.github.korzepadawid.springtaskplanning.model.User;
 import io.github.korzepadawid.springtaskplanning.repository.AvatarRepository;
@@ -42,19 +44,17 @@ public class UserServiceImpl implements UserService {
   public byte[] findAvatarByUserId(Long id) {
     return userRepository
         .findById(id)
+        .filter(user -> user.getAvatar() != null)
         .map(
             user -> {
-              Avatar userAvatar = user.getAvatar();
-              if (userAvatar != null) {
-                try {
-                  return storageService.downloadFile(userAvatar.getStorageKey());
-                } catch (IOException e) {
-                  e.printStackTrace();
-                }
+              try {
+                return storageService.downloadFile(user.getAvatar().getStorageKey());
+              } catch (IOException e) {
+                e.printStackTrace();
               }
-              throw new ResourceNotFoundException("Avatar not found");
+              return new byte[0];
             })
-        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        .orElseThrow(() -> new ResourceNotFoundException("Not found"));
   }
 
   @Override
@@ -64,26 +64,31 @@ public class UserServiceImpl implements UserService {
         .findByEmail(email)
         .ifPresentOrElse(
             user -> {
-              Avatar userAvatar = user.getAvatar();
-              String storageKey = "";
-              if (userAvatar == null) {
-                storageKey = UUID.randomUUID().toString();
-                Avatar avatar = new Avatar();
-                avatar.setUser(user);
-                avatar.setStorageKey(storageKey);
-                avatarRepository.save(avatar);
+              if (user.getAuthProvider().equals(AuthProvider.LOCAL)) {
+                Avatar avatarToSave;
+                if (user.getAvatar() != null) {
+                  avatarToSave = user.getAvatar();
+                } else {
+                  Avatar avatar = new Avatar();
+                  avatar.setStorageKey(UUID.randomUUID().toString());
+                  avatar.setUser(user);
+                  avatarToSave = avatarRepository.save(avatar);
+                }
+                try {
+                  storageService.putFile(
+                      file,
+                      Arrays.asList("png", "jpg", "jpeg"),
+                      1000000,
+                      avatarToSave.getStorageKey());
+                } catch (IOException e) {
+                  e.printStackTrace();
+                }
               } else {
-                storageKey = userAvatar.getStorageKey();
-              }
-              try {
-                storageService.putFile(
-                    file, Arrays.asList("png", "jpeg", "jpg"), 1000000, storageKey);
-              } catch (IOException e) {
-                e.printStackTrace();
+                throw new BusinessLogicException("You can't change OAuth2 provider's avatar.");
               }
             },
             () -> {
-              throw new ResourceNotFoundException("User doesn't exist");
+              throw new ResourceNotFoundException("User doesn't exist.");
             });
   }
 
