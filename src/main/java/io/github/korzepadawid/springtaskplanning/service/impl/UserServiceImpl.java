@@ -57,6 +57,10 @@ public class UserServiceImpl implements UserService {
         .orElseThrow(() -> new ResourceNotFoundException("Not found"));
   }
 
+  /**
+   * Changing the avatar feature is impossible for OAuth2 users. It checks if the avatar already
+   * exists, otherwise, it creates a new one.
+   */
   @Override
   @Transactional
   public void setAvatar(String email, MultipartFile file) {
