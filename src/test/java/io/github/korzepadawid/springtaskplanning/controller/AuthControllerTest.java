@@ -41,7 +41,10 @@ class AuthControllerTest {
 
   @BeforeEach
   void setUp() {
-    mockMvc = MockMvcBuilders.standaloneSetup(authController).build();
+    mockMvc =
+        MockMvcBuilders.standaloneSetup(authController)
+            .setControllerAdvice(GlobalControllerExceptionHandler.class)
+            .build();
   }
 
   @Test

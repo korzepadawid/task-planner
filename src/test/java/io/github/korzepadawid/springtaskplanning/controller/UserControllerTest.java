@@ -36,7 +36,10 @@ class UserControllerTest {
 
   @BeforeEach
   void setUp() {
-    mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
+    mockMvc =
+        MockMvcBuilders.standaloneSetup(userController)
+            .setControllerAdvice(GlobalControllerExceptionHandler.class)
+            .build();
   }
 
   @Test

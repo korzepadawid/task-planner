@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
               }
               return new byte[0];
             })
-        .orElseThrow(() -> new ResourceNotFoundException("Not found"));
+        .orElseThrow(() -> new ResourceNotFoundException("User not found."));
   }
 
   /**
@@ -92,13 +92,13 @@ public class UserServiceImpl implements UserService {
               }
             },
             () -> {
-              throw new ResourceNotFoundException("User doesn't exist.");
+              throw new ResourceNotFoundException("User not found.");
             });
   }
 
   private User findUserWithEmail(String email) {
     return userRepository
         .findByEmail(email)
-        .orElseThrow(() -> new ResourceNotFoundException("User doesn't exist"));
+        .orElseThrow(() -> new ResourceNotFoundException("User not found."));
   }
 }

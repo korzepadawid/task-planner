@@ -6,7 +6,7 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
 import io.github.korzepadawid.springtaskplanning.config.AWSS3Config;
-import io.github.korzepadawid.springtaskplanning.exception.BusinessLogicException;
+import io.github.korzepadawid.springtaskplanning.exception.StorageException;
 import io.github.korzepadawid.springtaskplanning.service.StorageService;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -40,20 +40,20 @@ public class AWSS3StorageService implements StorageService {
       String storageKey) {
 
     if (!isValidExtension(multipartFile, extensions)) {
-      throw new BusinessLogicException("File not supported.");
+      throw new StorageException("File extension doesn't supported.");
     }
 
     File file = convertMultiPartFileToFile(multipartFile);
 
     if (!isValidSize(file, maxLimitInBytes)) {
-      throw new BusinessLogicException("File not supported.");
+      throw new StorageException("Maximum file size is " + maxLimitInBytes + " bytes.");
     }
 
     try {
       s3.putObject(s3Config.getBucketName(), storageKey, file);
       file.delete();
     } catch (AmazonServiceException e) {
-      log.error("Can't put file.");
+      log.error("Can't put {}", storageKey);
     }
   }
 
@@ -66,7 +66,7 @@ public class AWSS3StorageService implements StorageService {
     } catch (AmazonServiceException e) {
       log.error("Can't download {}", storageKey);
     } catch (IOException e) {
-      log.error("Can't download file.");
+      log.error("I/O error for {}", storageKey);
     }
     return null;
   }
