@@ -1,6 +1,7 @@
 package io.github.korzepadawid.springtaskplanning.config;
 
 import io.github.korzepadawid.springtaskplanning.security.JwtAuthenticationFilter;
+import io.github.korzepadawid.springtaskplanning.security.RestAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,11 +23,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final UserDetailsService userDetailsService;
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
+  private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
   public SecurityConfig(
-      UserDetailsService userDetailsService, JwtAuthenticationFilter jwtAuthenticationFilter) {
+      UserDetailsService userDetailsService,
+      JwtAuthenticationFilter jwtAuthenticationFilter,
+      RestAuthenticationEntryPoint restAuthenticationEntryPoint) {
     this.userDetailsService = userDetailsService;
     this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
   }
 
   @Override
@@ -54,6 +59,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .permitAll()
         .anyRequest()
         .authenticated()
+        .and()
+        .exceptionHandling()
+        .authenticationEntryPoint(restAuthenticationEntryPoint)
         .and()
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
   }

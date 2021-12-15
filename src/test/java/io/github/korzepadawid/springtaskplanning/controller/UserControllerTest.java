@@ -29,10 +29,8 @@ class UserControllerTest {
 
   private MockMvc mockMvc;
 
-  public static final String GET_USERS_ME_URL = "/api/v1/users/me";
-  public static final String JWT_TOKEN =
-      "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ0ZXN0QGd"
-          + "tYWlsLmNvbSIsImV4cCI6MTYzODk4MzUzN30.BwaQ4k1EhAT7CW6XpKMJ9xry8Ma220iMF0Rc0BqVNOA";
+  public static final String API_V_1_USERS_ME = "/api/v1/users/me";
+  public static final String API_V_1_USERS_ME_AVATAR = "/api/v1/users/1/avatar";
 
   @BeforeEach
   void setUp() {
@@ -46,9 +44,7 @@ class UserControllerTest {
   void shouldReturn404WhenUserDoesNotExist() throws Exception {
     when(userService.findUserByEmail(any())).thenThrow(ResourceNotFoundException.class);
 
-    mockMvc
-        .perform(get(GET_USERS_ME_URL).header("Authorization", "Bearer " + JWT_TOKEN))
-        .andExpect(status().isNotFound());
+    mockMvc.perform(get(API_V_1_USERS_ME)).andExpect(status().isNotFound());
   }
 
   @Test
@@ -56,8 +52,20 @@ class UserControllerTest {
     User user = UserFactory.getUser(AuthProvider.GOOGLE);
     when(userService.findUserByEmail(any())).thenReturn(new UserResponse(user));
 
-    mockMvc
-        .perform(get(GET_USERS_ME_URL).header("Authorization", "Bearer " + JWT_TOKEN))
-        .andExpect(status().isOk());
+    mockMvc.perform(get(API_V_1_USERS_ME)).andExpect(status().isOk());
+  }
+
+  @Test
+  void shouldReturn404WhenGetAvatarAndUserDoesNotExist() throws Exception {
+    when(userService.findAvatarByUserId(any())).thenThrow(ResourceNotFoundException.class);
+
+    mockMvc.perform(get(API_V_1_USERS_ME_AVATAR)).andExpect(status().isNotFound());
+  }
+
+  @Test
+  void shouldReturn200WhenGetAvatarUserExists() throws Exception {
+    when(userService.findAvatarByUserId(any())).thenReturn(new byte[0]);
+
+    mockMvc.perform(get(API_V_1_USERS_ME_AVATAR)).andExpect(status().isOk());
   }
 }
