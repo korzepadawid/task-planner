@@ -15,9 +15,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -31,15 +32,15 @@ public class UserController {
 
   @GetMapping("/me")
   public ResponseEntity<UserResponse> findCurrentUser(
-      @CurrentlyAuthenticatedUser UserPrincipal userPrincipal) {
+      @ApiIgnore @CurrentlyAuthenticatedUser UserPrincipal userPrincipal) {
     UserResponse userResponse = userService.findUserByEmail(userPrincipal.getEmail());
     return new ResponseEntity<>(userResponse, HttpStatus.OK);
   }
 
   @PutMapping("/me/avatar")
   public ResponseEntity<Void> setAvatar(
-      @CurrentlyAuthenticatedUser UserPrincipal userPrincipal,
-      @RequestParam("file") MultipartFile multipartFile)
+      @ApiIgnore @CurrentlyAuthenticatedUser UserPrincipal userPrincipal,
+      @RequestPart("file") MultipartFile multipartFile)
       throws IOException {
     userService.setAvatar(userPrincipal.getEmail(), multipartFile);
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
