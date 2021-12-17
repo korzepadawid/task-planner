@@ -1,6 +1,8 @@
 package io.github.korzepadawid.springtaskplanning.model;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -8,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
@@ -19,21 +22,29 @@ import javax.validation.constraints.Size;
 public class User extends AbstractBaseEntity {
 
   @Embedded private final DateAudit dateAudit = new DateAudit();
+
   @NotBlank
   @Size(min = 3, max = 255)
   private String name;
+
   @Email
   @NotBlank
   @Column(unique = true)
   @Size(min = 3, max = 320)
   private String email;
+
   @NotBlank
   @Size(max = 72)
   private String password;
+
   @Enumerated(EnumType.STRING)
   private AuthProvider authProvider;
+
   @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
   private Avatar avatar;
+
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  private final Set<TaskList> taskLists = new HashSet<>();
 
   public User() {}
 
@@ -71,6 +82,10 @@ public class User extends AbstractBaseEntity {
 
   public DateAudit getDateAudit() {
     return dateAudit;
+  }
+
+  public Set<TaskList> getTaskLists() {
+    return taskLists;
   }
 
   public Avatar getAvatar() {
