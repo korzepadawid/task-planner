@@ -10,12 +10,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
@@ -30,22 +30,23 @@ public class UserController {
     this.userService = userService;
   }
 
+  @ResponseStatus(HttpStatus.OK)
   @GetMapping("/me")
-  public ResponseEntity<UserResponse> findCurrentUser(
+  public UserResponse findCurrentUser(
       @ApiIgnore @CurrentlyAuthenticatedUser UserPrincipal userPrincipal) {
-    UserResponse userResponse = userService.findUserByEmail(userPrincipal.getEmail());
-    return new ResponseEntity<>(userResponse, HttpStatus.OK);
+    return userService.findUserByEmail(userPrincipal.getEmail());
   }
 
+  @ResponseStatus(HttpStatus.NO_CONTENT)
   @PutMapping("/me/avatar")
-  public ResponseEntity<Void> setAvatar(
+  public void setAvatar(
       @ApiIgnore @CurrentlyAuthenticatedUser UserPrincipal userPrincipal,
       @RequestPart("file") MultipartFile multipartFile)
       throws IOException {
     userService.setAvatar(userPrincipal.getEmail(), multipartFile);
-    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
+  @ResponseStatus(HttpStatus.OK)
   @GetMapping("/{id}/avatar")
   public void getAvatar(@PathVariable Long id, HttpServletResponse httpServletResponse)
       throws IOException {

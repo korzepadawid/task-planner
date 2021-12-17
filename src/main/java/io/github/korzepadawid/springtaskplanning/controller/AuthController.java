@@ -7,10 +7,10 @@ import io.github.korzepadawid.springtaskplanning.dto.UserResponse;
 import io.github.korzepadawid.springtaskplanning.service.AuthService;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -23,15 +23,15 @@ public class AuthController {
     this.authService = authService;
   }
 
+  @ResponseStatus(HttpStatus.CREATED)
   @PostMapping("/register")
-  public ResponseEntity<UserResponse> register(
-      @Valid @RequestBody AuthRegisterRequest authRegisterRequest) {
-    return new ResponseEntity<>(authService.register(authRegisterRequest), HttpStatus.CREATED);
+  public UserResponse register(@Valid @RequestBody AuthRegisterRequest authRegisterRequest) {
+    return authService.register(authRegisterRequest);
   }
 
+  @ResponseStatus(HttpStatus.OK)
   @PostMapping("/login")
-  public ResponseEntity<AuthLoginResponse> login(
-      @Valid @RequestBody AuthLoginRequest authLoginRequest) {
-    return new ResponseEntity<>(authService.login(authLoginRequest), HttpStatus.OK);
+  public AuthLoginResponse login(@Valid @RequestBody AuthLoginRequest authLoginRequest) {
+    return authService.login(authLoginRequest);
   }
 }
