@@ -5,7 +5,6 @@ import io.github.korzepadawid.springtaskplanning.exception.BusinessLogicExceptio
 import io.github.korzepadawid.springtaskplanning.exception.ResourceNotFoundException;
 import io.github.korzepadawid.springtaskplanning.model.AuthProvider;
 import io.github.korzepadawid.springtaskplanning.model.Avatar;
-import io.github.korzepadawid.springtaskplanning.model.User;
 import io.github.korzepadawid.springtaskplanning.repository.AvatarRepository;
 import io.github.korzepadawid.springtaskplanning.repository.UserRepository;
 import io.github.korzepadawid.springtaskplanning.service.StorageService;
@@ -35,8 +34,11 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional(readOnly = true)
-  public UserResponse findUserByEmail(String email) {
-    return new UserResponse(findUserWithEmail(email));
+  public UserResponse findUserById(Long id) {
+    return userRepository
+        .findById(id)
+        .map(UserResponse::new)
+        .orElseThrow(() -> new ResourceNotFoundException("User not found."));
   }
 
   @Override
@@ -63,9 +65,9 @@ public class UserServiceImpl implements UserService {
    */
   @Override
   @Transactional
-  public void setAvatar(String email, MultipartFile file) {
+  public void setAvatar(Long id, MultipartFile file) {
     userRepository
-        .findByEmail(email)
+        .findById(id)
         .ifPresentOrElse(
             user -> {
               if (user.getAuthProvider().equals(AuthProvider.LOCAL)) {
@@ -94,11 +96,5 @@ public class UserServiceImpl implements UserService {
             () -> {
               throw new ResourceNotFoundException("User not found.");
             });
-  }
-
-  private User findUserWithEmail(String email) {
-    return userRepository
-        .findByEmail(email)
-        .orElseThrow(() -> new ResourceNotFoundException("User not found."));
   }
 }

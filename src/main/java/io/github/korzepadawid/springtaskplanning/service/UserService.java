@@ -6,9 +6,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {
 
-  UserResponse findUserByEmail(String email);
+  UserResponse findUserById(Long id);
 
   byte[] findAvatarByUserId(Long id);
 
-  void setAvatar(String userEmail, MultipartFile file) throws IOException;
+  void setAvatar(Long id, MultipartFile file) throws IOException;
 }

@@ -39,9 +39,9 @@ class UserServiceImplTest {
 
   @Test
   void shouldThrowResourceNotFoundExceptionWhenUserDoesNotExist() {
-    when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+    when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-    Throwable exception = catchThrowable(() -> userService.findUserByEmail("test@email.com"));
+    Throwable exception = catchThrowable(() -> userService.findUserById(1L));
 
     assertThat(exception).isInstanceOf(ResourceNotFoundException.class);
   }
@@ -49,18 +49,18 @@ class UserServiceImplTest {
   @Test
   void shouldReturnUserWhenUserExists() {
     User user = UserFactory.getUser(AuthProvider.GOOGLE);
-    when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
+    when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
 
-    UserResponse result = userService.findUserByEmail(user.getEmail());
+    UserResponse result = userService.findUserById(user.getId());
 
-    assertThat(result).isNotNull().hasFieldOrPropertyWithValue("email", user.getEmail());
+    assertThat(result).isNotNull().hasFieldOrPropertyWithValue("id", user.getId());
   }
 
   @Test
   void shouldThrowResourceNotFoundExceptionWhenUserDoesNotExistAndStopUpdatingAvatar() {
-    when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+    when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-    Throwable exception = catchThrowable(() -> userService.setAvatar("test@email.com", null));
+    Throwable exception = catchThrowable(() -> userService.setAvatar(1L, null));
 
     assertThat(exception).isInstanceOf(ResourceNotFoundException.class);
   }
@@ -68,9 +68,9 @@ class UserServiceImplTest {
   @Test
   void shouldThrowBusinessLogicExceptionWhenUserUpdatesAvatarAndComesFromThirdPartyAuthProvider() {
     User user = UserFactory.getUser(AuthProvider.GOOGLE);
-    when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
+    when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
 
-    Throwable exception = catchThrowable(() -> userService.setAvatar(user.getEmail(), null));
+    Throwable exception = catchThrowable(() -> userService.setAvatar(user.getId(), null));
 
     assertThat(exception).isInstanceOf(BusinessLogicException.class);
   }
@@ -80,12 +80,12 @@ class UserServiceImplTest {
     User user = UserFactory.getUser(AuthProvider.LOCAL);
     user.setAvatar(null);
     Avatar avatar = AvatarFactory.getAvatar();
-    when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
+    when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
     when(avatarRepository.save(any())).thenReturn(avatar);
 
-    userService.setAvatar(user.getEmail(), null);
+    userService.setAvatar(user.getId(), null);
 
-    verify(userRepository, times(1)).findByEmail(anyString());
+    verify(userRepository, times(1)).findById(anyLong());
     verify(avatarRepository, times(1)).save(any());
   }
 
@@ -94,11 +94,11 @@ class UserServiceImplTest {
     User user = UserFactory.getUser(AuthProvider.LOCAL);
     Avatar avatar = AvatarFactory.getAvatar();
     user.setAvatar(avatar);
-    when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
+    when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
 
-    userService.setAvatar(user.getEmail(), null);
+    userService.setAvatar(user.getId(), null);
 
-    verify(userRepository, times(1)).findByEmail(anyString());
+    verify(userRepository, times(1)).findById(anyLong());
     verify(avatarRepository, times(0)).save(any());
   }
 

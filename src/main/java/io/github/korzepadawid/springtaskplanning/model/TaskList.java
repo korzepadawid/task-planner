@@ -1,11 +1,15 @@
 package io.github.korzepadawid.springtaskplanning.model;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -22,9 +26,21 @@ public class TaskList extends AbstractBaseEntity {
   @JoinColumn(name = "user_id")
   private User user;
 
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "taskList")
+  private final Set<Task> tasks = new HashSet<>();
+
   @Embedded private final DateAudit dateAudit = new DateAudit();
 
   public TaskList() {}
+
+  public void addTaskToList(Task task) {
+    task.setTaskList(this);
+    tasks.add(task);
+  }
+
+  public Set<Task> getTasks() {
+    return tasks;
+  }
 
   public String getTitle() {
     return title;

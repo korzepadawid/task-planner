@@ -48,6 +48,11 @@ public class User extends AbstractBaseEntity {
 
   public User() {}
 
+  public void addTaskList(TaskList taskList) {
+    taskList.setUser(this);
+    taskLists.add(taskList);
+  }
+
   public String getName() {
     return name;
   }
