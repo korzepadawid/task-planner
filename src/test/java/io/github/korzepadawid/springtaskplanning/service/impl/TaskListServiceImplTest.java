@@ -110,4 +110,50 @@ class TaskListServiceImplTest {
 
     assertThat(result).isNotNull().hasFieldOrPropertyWithValue("title", taskList.getTitle());
   }
+
+  @Test
+  void shouldThrowResourceNotFoundExceptionWhenCanNotDelete() {
+    final Long taskListId = 2L;
+    User user = UserFactory.getUser(AuthProvider.LOCAL);
+    when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+    when(taskListRepository.deleteByUserAndId(any(User.class), eq(taskListId))).thenReturn(0);
+
+    Throwable exception =
+        catchThrowable(() -> taskListService.deleteTaskListById(user.getId(), taskListId));
+
+    assertThat(exception).isNotNull().isInstanceOf(ResourceNotFoundException.class);
+  }
+
+  @Test
+  void shouldThrowResourceNotFoundExceptionWhenCanNotUpdate() {
+    final Long taskListId = 2L;
+    User user = UserFactory.getUser(AuthProvider.LOCAL);
+    when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+    when(taskListRepository.findByUserAndId(any(User.class), anyLong()))
+        .thenReturn(Optional.empty());
+
+    Throwable exception =
+        catchThrowable(
+            () ->
+                taskListService.updateTaskListById(
+                    user.getId(), taskListId, TaskListFactory.getTaskListRequest("test")));
+
+    assertThat(exception).isNotNull().isInstanceOf(ResourceNotFoundException.class);
+  }
+
+  @Test
+  void shouldUpdateWhenTaskListExists() {
+    final Long taskListId = 2L;
+    final String newTaskListTitle = "new task list title";
+    User user = UserFactory.getUser(AuthProvider.LOCAL);
+    TaskList taskList = TaskListFactory.getTaskList("task list");
+    when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+    when(taskListRepository.findByUserAndId(any(User.class), anyLong()))
+        .thenReturn(Optional.of(taskList));
+
+    taskListService.updateTaskListById(
+        user.getId(), taskListId, TaskListFactory.getTaskListRequest(newTaskListTitle));
+
+    assertThat(taskList.getTitle()).isEqualTo(newTaskListTitle);
+  }
 }

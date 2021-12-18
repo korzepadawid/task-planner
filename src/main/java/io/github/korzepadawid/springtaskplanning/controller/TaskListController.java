@@ -52,13 +52,17 @@ public class TaskListController {
 
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deleteTaskListById(@PathVariable Long id) {
-    throw new NotYetImplementedException();
+  public void deleteTaskListById(
+      @PathVariable Long id, @ApiIgnore @AuthenticationPrincipal UserPrincipal userPrincipal) {
+    taskListService.deleteTaskListById(userPrincipal.getId(), id);
   }
 
   @PatchMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void updateTaskListById(@PathVariable Long id) {
-    throw new NotYetImplementedException();
+  public void updateTaskListById(
+      @PathVariable Long id,
+      @ApiIgnore @AuthenticationPrincipal UserPrincipal userPrincipal,
+      @Valid @RequestBody TaskListRequest taskListRequest) {
+    taskListService.updateTaskListById(userPrincipal.getId(), id, taskListRequest);
   }
 }

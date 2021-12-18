@@ -11,4 +11,6 @@ public interface TaskListRepository {
   Optional<TaskList> findByUserAndTitle(User user, String taskListTitle);
 
   Optional<TaskList> findByUserAndId(User user, Long taskListId);
+
+  Integer deleteByUserAndId(User user, Long taskListId);
 }

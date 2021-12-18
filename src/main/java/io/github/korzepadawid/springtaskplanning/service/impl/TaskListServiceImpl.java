@@ -57,6 +57,37 @@ public class TaskListServiceImpl implements TaskListService {
         .orElseThrow(() -> new ResourceNotFoundException("User not found"));
   }
 
+  @Override
+  @Transactional
+  public void deleteTaskListById(Long userId, Long taskListId) {
+    userRepository
+        .findById(userId)
+        .ifPresent(
+            user -> {
+              if (taskListRepository.deleteByUserAndId(user, taskListId) == 0) {
+                throw new ResourceNotFoundException("Task list not found");
+              }
+            });
+  }
+
+  @Override
+  @Transactional
+  public void updateTaskListById(Long userId, Long taskListId, TaskListRequest updates) {
+    if (updates != null) {
+      userRepository
+          .findById(userId)
+          .ifPresent(
+              user ->
+                  taskListRepository
+                      .findByUserAndId(user, taskListId)
+                      .ifPresentOrElse(
+                          taskList -> taskList.setTitle(updates.getTitle()),
+                          () -> {
+                            throw new ResourceNotFoundException("Task list not found");
+                          }));
+    }
+  }
+
   private TaskList mapRequestToEntity(TaskListRequest taskListRequest) {
     TaskList taskList = new TaskList();
     taskList.setTitle(taskListRequest.getTitle());

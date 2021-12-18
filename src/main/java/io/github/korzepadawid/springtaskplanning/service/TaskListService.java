@@ -8,4 +8,8 @@ public interface TaskListService {
   TaskListResponse saveTaskList(Long userId, TaskListRequest taskListRequest);
 
   TaskListResponse findTaskListById(Long userId, Long taskListId);
+
+  void deleteTaskListById(Long userId, Long taskListId);
+
+  void updateTaskListById(Long userId, Long taskListId, TaskListRequest updates);
 }
