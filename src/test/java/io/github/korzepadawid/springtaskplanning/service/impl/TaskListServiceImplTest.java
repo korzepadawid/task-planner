@@ -17,6 +17,9 @@ import io.github.korzepadawid.springtaskplanning.repository.TaskListRepository;
 import io.github.korzepadawid.springtaskplanning.service.UserService;
 import io.github.korzepadawid.springtaskplanning.util.TaskListFactory;
 import io.github.korzepadawid.springtaskplanning.util.UserFactory;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -97,7 +100,7 @@ class TaskListServiceImplTest {
     when(taskListRepository.findByUserAndId(any(User.class), eq(taskList.getId())))
         .thenReturn(Optional.of(taskList));
 
-    TaskListResponse result = taskListService.findTaskListById(user.getId(), taskList.getId());
+    TaskList result = taskListService.findTaskListById(user.getId(), taskList.getId());
 
     assertThat(result).isNotNull().hasFieldOrPropertyWithValue("title", taskList.getTitle());
   }
@@ -146,5 +149,33 @@ class TaskListServiceImplTest {
         user.getId(), taskListId, TaskListFactory.getTaskListRequest(newTaskListTitle));
 
     assertThat(taskList.getTitle()).isEqualTo(newTaskListTitle);
+  }
+
+  @Test
+  void shouldReturnEmptyResultWhenTaskListsDoNotExist() {
+    User user = UserFactory.getUser(AuthProvider.LOCAL);
+    when(userService.findUserById(anyLong())).thenReturn(user);
+    when(taskListRepository.findAllByUser(any(User.class))).thenReturn(Collections.emptyList());
+
+    List<TaskListResponse> result = taskListService.findAllTaskListsByUserId(user.getId());
+
+    assertThat(result.size()).isEqualTo(0);
+  }
+
+  @Test
+  void shouldReturnTaskListsWhenTheyExist() {
+    User user = UserFactory.getUser(AuthProvider.LOCAL);
+    List<TaskList> taskLists =
+        Arrays.asList(
+            TaskListFactory.getTaskList("a"),
+            TaskListFactory.getTaskList("b"),
+            TaskListFactory.getTaskList("c"),
+            TaskListFactory.getTaskList("d"));
+    when(userService.findUserById(anyLong())).thenReturn(user);
+    when(taskListRepository.findAllByUser(any(User.class))).thenReturn(taskLists);
+
+    List<TaskListResponse> result = taskListService.findAllTaskListsByUserId(user.getId());
+
+    assertThat(result.size()).isEqualTo(taskLists.size());
   }
 }

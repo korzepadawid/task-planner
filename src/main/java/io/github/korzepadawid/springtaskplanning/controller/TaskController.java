@@ -1,0 +1,69 @@
+package io.github.korzepadawid.springtaskplanning.controller;
+
+import io.github.korzepadawid.springtaskplanning.dto.TaskRequest;
+import io.github.korzepadawid.springtaskplanning.dto.TaskShortResponse;
+import io.github.korzepadawid.springtaskplanning.security.UserPrincipal;
+import io.github.korzepadawid.springtaskplanning.service.TaskService;
+import javax.validation.Valid;
+import org.hibernate.cfg.NotYetImplementedException;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
+
+@RestController
+public class TaskController {
+
+  private final TaskService taskService;
+
+  public TaskController(TaskService taskService) {
+    this.taskService = taskService;
+  }
+
+  @ResponseStatus(HttpStatus.CREATED)
+  @PostMapping("/api/v1/task-lists/{taskListId}/tasks")
+  public TaskShortResponse saveTask(
+      @PathVariable Long taskListId,
+      @Valid @RequestBody TaskRequest taskRequest,
+      @ApiIgnore @AuthenticationPrincipal UserPrincipal userPrincipal) {
+    return taskService.saveTask(userPrincipal.getId(), taskListId, taskRequest);
+  }
+
+  @ResponseStatus(HttpStatus.OK)
+  @GetMapping("/api/v1/task-lists/{taskListId}/tasks")
+  public void findTasksByTaskListId(@PathVariable Long taskListId) {
+    throw new NotYetImplementedException();
+  }
+
+  @ResponseStatus(HttpStatus.OK)
+  @GetMapping("/api/v1/tasks/{taskId}")
+  public void findTaskById(@PathVariable Long taskId) {
+    throw new NotYetImplementedException();
+  }
+
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @PatchMapping("/api/v1/tasks/{taskId}")
+  public void toggleTaskById(@PathVariable Long taskId) {
+    throw new NotYetImplementedException();
+  }
+
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @PutMapping("/api/v1/tasks/{taskId}")
+  public void updateTaskById(@PathVariable Long taskId) {
+    throw new NotYetImplementedException();
+  }
+
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @DeleteMapping("/api/v1/tasks/{taskId}")
+  public void deleteTaskById(@PathVariable Long taskId) {
+    throw new NotYetImplementedException();
+  }
+}

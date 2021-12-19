@@ -40,7 +40,7 @@ public class User extends AbstractBaseEntity {
   @Enumerated(EnumType.STRING)
   private AuthProvider authProvider;
 
-  @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
+  @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
   private Avatar avatar;
 
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

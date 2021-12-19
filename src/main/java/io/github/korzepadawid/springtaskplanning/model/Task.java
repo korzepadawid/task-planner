@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Future;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -26,7 +27,7 @@ public class Task extends AbstractBaseEntity {
   @JoinColumn(name = "task_list_id")
   private TaskList taskList;
 
-  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "task")
+  @OneToOne(cascade = CascadeType.ALL, mappedBy = "task")
   private TaskNote taskNote;
 
   @NotBlank
@@ -35,11 +36,16 @@ public class Task extends AbstractBaseEntity {
 
   @NotNull private Boolean done;
 
-  @NotNull private ZonedDateTime deadline;
+  @NotNull @Future private ZonedDateTime deadline;
 
   @Embedded private final DateAudit dateAudit = new DateAudit();
 
   public Task() {}
+
+  public void addNote(TaskNote taskNote) {
+    this.taskNote = taskNote;
+    taskNote.setTask(this);
+  }
 
   public User getUser() {
     return user;

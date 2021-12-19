@@ -43,11 +43,10 @@ public class TaskListServiceImpl implements TaskListService {
 
   @Override
   @Transactional(readOnly = true)
-  public TaskListResponse findTaskListById(Long userId, Long taskListId) {
+  public TaskList findTaskListById(Long userId, Long taskListId) {
     User user = userService.findUserById(userId);
     return taskListRepository
         .findByUserAndId(user, taskListId)
-        .map(TaskListResponse::new)
         .orElseThrow(() -> new ResourceNotFoundException("Task list not found"));
   }
 
@@ -63,15 +62,9 @@ public class TaskListServiceImpl implements TaskListService {
   @Override
   @Transactional
   public void updateTaskListById(Long userId, Long taskListId, TaskListRequest updates) {
-    if (updates != null) {
-      User user = userService.findUserById(userId);
-      taskListRepository
-          .findByUserAndId(user, taskListId)
-          .ifPresentOrElse(
-              taskList -> taskList.setTitle(updates.getTitle()),
-              () -> {
-                throw new ResourceNotFoundException("Task list not found");
-              });
+    if (updates != null && updates.getTitle() != null) {
+      TaskList taskList = findTaskListById(userId, taskListId);
+      taskList.setTitle(updates.getTitle());
     }
   }
 
