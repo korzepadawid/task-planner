@@ -3,9 +3,9 @@ package io.github.korzepadawid.springtaskplanning.repository.sql;
 import io.github.korzepadawid.springtaskplanning.model.TaskList;
 import io.github.korzepadawid.springtaskplanning.model.User;
 import io.github.korzepadawid.springtaskplanning.repository.TaskListRepository;
+import java.util.List;
 import java.util.Optional;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface TaskListRepositorySql
@@ -15,7 +15,10 @@ public interface TaskListRepositorySql
 
   Optional<TaskList> findByUserAndId(User user, Long taskListId);
 
-  Integer deleteByUserAndId(User user, Long taskListId);
+  @Query(
+      "select tl from TaskList tl left join fetch tl.tasks t where tl.user = :user order by tl"
+          + ".dateAudit.createdAt desc ")
+  List<TaskList> findAllByUser(User user);
 
-  Page<TaskList> findAllByUser(User user, Pageable pageable);
+  Integer deleteByUserAndId(User user, Long taskListId);
 }

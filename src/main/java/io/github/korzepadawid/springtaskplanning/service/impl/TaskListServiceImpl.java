@@ -9,8 +9,8 @@ import io.github.korzepadawid.springtaskplanning.model.User;
 import io.github.korzepadawid.springtaskplanning.repository.TaskListRepository;
 import io.github.korzepadawid.springtaskplanning.service.TaskListService;
 import io.github.korzepadawid.springtaskplanning.service.UserService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,12 +76,12 @@ public class TaskListServiceImpl implements TaskListService {
   }
 
   @Override
-  @Transactional
-  public Page<TaskListResponse> findAllTaskListsByUserId(Long userId, Integer pageNumber) {
+  @Transactional(readOnly = true)
+  public List<TaskListResponse> findAllTaskListsByUserId(Long userId) {
     User user = userService.findUserById(userId);
-    return taskListRepository
-        .findAllByUser(user, PageRequest.of(Math.max(pageNumber - 1, 0), 10))
-        .map(TaskListResponse::new);
+    return taskListRepository.findAllByUser(user).stream()
+        .map(TaskListResponse::new)
+        .collect(Collectors.toList());
   }
 
   private TaskList mapRequestToEntity(TaskListRequest taskListRequest) {

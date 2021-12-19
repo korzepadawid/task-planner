@@ -2,9 +2,8 @@ package io.github.korzepadawid.springtaskplanning.repository;
 
 import io.github.korzepadawid.springtaskplanning.model.TaskList;
 import io.github.korzepadawid.springtaskplanning.model.User;
+import java.util.List;
 import java.util.Optional;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 public interface TaskListRepository {
 
@@ -16,5 +15,5 @@ public interface TaskListRepository {
 
   Integer deleteByUserAndId(User user, Long taskListId);
 
-  Page<TaskList> findAllByUser(User user, Pageable pageable);
+  List<TaskList> findAllByUser(User user);
 }
