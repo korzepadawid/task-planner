@@ -6,6 +6,11 @@ spring:
     hibernate:
       ddl-auto: validate
     show-sql: true
+  jackson:
+    deserialization:
+      read-date-timestamps-as-nanoseconds: true
+    serialization:
+      write-dates-as-timestamps: true
 jwt:
   config:
     access-token-expiration-in-seconds: 1800
