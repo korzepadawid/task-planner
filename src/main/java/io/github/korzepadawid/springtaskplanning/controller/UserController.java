@@ -34,7 +34,7 @@ public class UserController {
   @GetMapping("/me")
   public UserResponse findCurrentUser(
       @ApiIgnore @AuthenticationPrincipal UserPrincipal userPrincipal) {
-    return userService.findUserById(userPrincipal.getId());
+    return new UserResponse(userService.findUserById(userPrincipal.getId()));
   }
 
   @ResponseStatus(HttpStatus.NO_CONTENT)

@@ -1,10 +1,10 @@
 package io.github.korzepadawid.springtaskplanning.service.impl;
 
-import io.github.korzepadawid.springtaskplanning.dto.UserResponse;
 import io.github.korzepadawid.springtaskplanning.exception.BusinessLogicException;
 import io.github.korzepadawid.springtaskplanning.exception.ResourceNotFoundException;
 import io.github.korzepadawid.springtaskplanning.model.AuthProvider;
 import io.github.korzepadawid.springtaskplanning.model.Avatar;
+import io.github.korzepadawid.springtaskplanning.model.User;
 import io.github.korzepadawid.springtaskplanning.repository.AvatarRepository;
 import io.github.korzepadawid.springtaskplanning.repository.UserRepository;
 import io.github.korzepadawid.springtaskplanning.service.StorageService;
@@ -34,29 +34,24 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional(readOnly = true)
-  public UserResponse findUserById(Long id) {
+  public User findUserById(Long id) {
     return userRepository
         .findById(id)
-        .map(UserResponse::new)
         .orElseThrow(() -> new ResourceNotFoundException("User not found."));
   }
 
   @Override
   @Transactional(readOnly = true)
   public byte[] findAvatarByUserId(Long id) {
-    return userRepository
-        .findById(id)
-        .filter(user -> user.getAvatar() != null)
-        .map(
-            user -> {
-              try {
-                return storageService.downloadFile(user.getAvatar().getStorageKey());
-              } catch (IOException e) {
-                e.printStackTrace();
-              }
-              return new byte[0];
-            })
-        .orElseThrow(() -> new ResourceNotFoundException("User not found."));
+    User user = findUserById(id);
+    if (user.getAvatar() != null) {
+      try {
+        return storageService.downloadFile(user.getAvatar().getStorageKey());
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+    throw new ResourceNotFoundException("Avatar not found");
   }
 
   /**
@@ -66,35 +61,25 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public void setAvatar(Long id, MultipartFile file) {
-    userRepository
-        .findById(id)
-        .ifPresentOrElse(
-            user -> {
-              if (user.getAuthProvider().equals(AuthProvider.LOCAL)) {
-                Avatar avatarToSave;
-                if (user.getAvatar() != null) {
-                  avatarToSave = user.getAvatar();
-                } else {
-                  Avatar avatar = new Avatar();
-                  avatar.setStorageKey(UUID.randomUUID().toString());
-                  avatar.setUser(user);
-                  avatarToSave = avatarRepository.save(avatar);
-                }
-                try {
-                  storageService.putFile(
-                      file,
-                      Arrays.asList("png", "jpg", "jpeg"),
-                      1000000,
-                      avatarToSave.getStorageKey());
-                } catch (IOException e) {
-                  e.printStackTrace();
-                }
-              } else {
-                throw new BusinessLogicException("You can't change OAuth2 provider's avatar.");
-              }
-            },
-            () -> {
-              throw new ResourceNotFoundException("User not found.");
-            });
+    User user = findUserById(id);
+    if (user.getAuthProvider().equals(AuthProvider.LOCAL)) {
+      Avatar avatarToSave;
+      if (user.getAvatar() != null) {
+        avatarToSave = user.getAvatar();
+      } else {
+        Avatar avatar = new Avatar();
+        avatar.setStorageKey(UUID.randomUUID().toString());
+        avatar.setUser(user);
+        avatarToSave = avatarRepository.save(avatar);
+      }
+      try {
+        storageService.putFile(
+            file, Arrays.asList("png", "jpg", "jpeg"), 1000000, avatarToSave.getStorageKey());
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    } else {
+      throw new BusinessLogicException("You can't change OAuth2 provider's avatar.");
+    }
   }
 }

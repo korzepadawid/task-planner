@@ -9,7 +9,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import io.github.korzepadawid.springtaskplanning.dto.UserResponse;
 import io.github.korzepadawid.springtaskplanning.exception.BusinessLogicException;
 import io.github.korzepadawid.springtaskplanning.exception.ResourceNotFoundException;
 import io.github.korzepadawid.springtaskplanning.model.AuthProvider;
@@ -51,7 +50,7 @@ class UserServiceImplTest {
     User user = UserFactory.getUser(AuthProvider.GOOGLE);
     when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
 
-    UserResponse result = userService.findUserById(user.getId());
+    User result = userService.findUserById(user.getId());
 
     assertThat(result).isNotNull().hasFieldOrPropertyWithValue("id", user.getId());
   }

@@ -14,7 +14,7 @@ import io.github.korzepadawid.springtaskplanning.model.AuthProvider;
 import io.github.korzepadawid.springtaskplanning.model.TaskList;
 import io.github.korzepadawid.springtaskplanning.model.User;
 import io.github.korzepadawid.springtaskplanning.repository.TaskListRepository;
-import io.github.korzepadawid.springtaskplanning.repository.UserRepository;
+import io.github.korzepadawid.springtaskplanning.service.UserService;
 import io.github.korzepadawid.springtaskplanning.util.TaskListFactory;
 import io.github.korzepadawid.springtaskplanning.util.UserFactory;
 import java.util.Optional;
@@ -27,27 +27,18 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class TaskListServiceImplTest {
 
-  @Mock private UserRepository userRepository;
+  @Mock private UserService userService;
 
   @Mock private TaskListRepository taskListRepository;
 
   @InjectMocks private TaskListServiceImpl taskListService;
 
   @Test
-  void shouldThrowResourceNotFoundExceptionWhenUserDoesNotExist() {
-    when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
-
-    Throwable exception = catchThrowable(() -> taskListService.saveTaskList(1L, null));
-
-    assertThat(exception).isInstanceOf(ResourceNotFoundException.class);
-  }
-
-  @Test
   void shouldThrowBusinessLogicExceptionWhenTaskListTitleHasBeenAlreadyTaken() {
     final String taskListTitle = "cool title";
     User user = UserFactory.getUser(AuthProvider.LOCAL);
     TaskList taskList = TaskListFactory.getTaskList(taskListTitle);
-    when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+    when(userService.findUserById(anyLong())).thenReturn(user);
     when(taskListRepository.findByUserAndTitle(any(User.class), eq(taskListTitle)))
         .thenReturn(Optional.of(taskList));
 
@@ -65,7 +56,7 @@ class TaskListServiceImplTest {
     final String taskListTitle = "cool title";
     User user = UserFactory.getUser(AuthProvider.LOCAL);
     TaskList taskList = TaskListFactory.getTaskList(taskListTitle);
-    when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+    when(userService.findUserById(anyLong())).thenReturn(user);
     when(taskListRepository.findByUserAndTitle(any(User.class), eq(taskListTitle)))
         .thenReturn(Optional.empty());
     when(taskListRepository.save(any(TaskList.class))).thenReturn(taskList);
@@ -88,7 +79,7 @@ class TaskListServiceImplTest {
   void shouldThrowResourceNotFoundExceptionWhenTaskListDoesNotExist() {
     final Long taskListId = 2L;
     User user = UserFactory.getUser(AuthProvider.LOCAL);
-    when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+    when(userService.findUserById(anyLong())).thenReturn(user);
     when(taskListRepository.findByUserAndId(any(User.class), eq(taskListId)))
         .thenReturn(Optional.empty());
 
@@ -102,7 +93,7 @@ class TaskListServiceImplTest {
   void shouldReturnTaskListWhenExists() {
     User user = UserFactory.getUser(AuthProvider.LOCAL);
     TaskList taskList = TaskListFactory.getTaskList("ok");
-    when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+    when(userService.findUserById(anyLong())).thenReturn(user);
     when(taskListRepository.findByUserAndId(any(User.class), eq(taskList.getId())))
         .thenReturn(Optional.of(taskList));
 
@@ -115,7 +106,7 @@ class TaskListServiceImplTest {
   void shouldThrowResourceNotFoundExceptionWhenCanNotDelete() {
     final Long taskListId = 2L;
     User user = UserFactory.getUser(AuthProvider.LOCAL);
-    when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+    when(userService.findUserById(anyLong())).thenReturn(user);
     when(taskListRepository.deleteByUserAndId(any(User.class), eq(taskListId))).thenReturn(0);
 
     Throwable exception =
@@ -128,7 +119,7 @@ class TaskListServiceImplTest {
   void shouldThrowResourceNotFoundExceptionWhenCanNotUpdate() {
     final Long taskListId = 2L;
     User user = UserFactory.getUser(AuthProvider.LOCAL);
-    when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+    when(userService.findUserById(anyLong())).thenReturn(user);
     when(taskListRepository.findByUserAndId(any(User.class), anyLong()))
         .thenReturn(Optional.empty());
 
@@ -147,7 +138,7 @@ class TaskListServiceImplTest {
     final String newTaskListTitle = "new task list title";
     User user = UserFactory.getUser(AuthProvider.LOCAL);
     TaskList taskList = TaskListFactory.getTaskList("task list");
-    when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+    when(userService.findUserById(anyLong())).thenReturn(user);
     when(taskListRepository.findByUserAndId(any(User.class), anyLong()))
         .thenReturn(Optional.of(taskList));
 
