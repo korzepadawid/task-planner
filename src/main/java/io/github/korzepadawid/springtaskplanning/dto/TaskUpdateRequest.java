@@ -4,17 +4,17 @@ import java.time.ZonedDateTime;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.Size;
 
-public class TaskRequest {
+public class TaskUpdateRequest {
 
   @Size(min = 1, max = 70)
   private String title;
 
-  @Size(max = 255)
+  @Size(min = 1, max = 255)
   private String note;
 
   @Future private ZonedDateTime deadline;
 
-  public TaskRequest() {}
+  public TaskUpdateRequest() {}
 
   public String getTitle() {
     return title;

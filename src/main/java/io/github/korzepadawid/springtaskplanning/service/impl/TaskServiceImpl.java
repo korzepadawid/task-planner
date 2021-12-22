@@ -1,7 +1,9 @@
 package io.github.korzepadawid.springtaskplanning.service.impl;
 
-import io.github.korzepadawid.springtaskplanning.dto.TaskRequest;
+import io.github.korzepadawid.springtaskplanning.dto.TaskCreateRequest;
+import io.github.korzepadawid.springtaskplanning.dto.TaskLongResponse;
 import io.github.korzepadawid.springtaskplanning.dto.TaskShortResponse;
+import io.github.korzepadawid.springtaskplanning.dto.TaskUpdateRequest;
 import io.github.korzepadawid.springtaskplanning.exception.ResourceNotFoundException;
 import io.github.korzepadawid.springtaskplanning.model.Task;
 import io.github.korzepadawid.springtaskplanning.model.TaskList;
@@ -36,22 +38,23 @@ public class TaskServiceImpl implements TaskService {
 
   @Override
   @Transactional
-  public TaskShortResponse saveTask(Long userId, Long taskListId, TaskRequest taskRequest) {
+  public TaskShortResponse saveTask(
+      Long userId, Long taskListId, TaskCreateRequest taskCreateRequest) {
     TaskList taskList = taskListService.findTaskListById(userId, taskListId);
 
     Task task = new Task();
-    task.setTitle(taskRequest.getTitle());
-    task.setDeadline(taskRequest.getDeadline());
+    task.setTitle(taskCreateRequest.getTitle());
+    task.setDeadline(taskCreateRequest.getDeadline());
     task.setDone(false);
     task.setUser(taskList.getUser());
     taskList.addTaskToList(task);
 
-    String note = taskRequest.getNote();
+    String note = taskCreateRequest.getNote();
     Task savedTask = taskRepository.save(task);
 
     if (note != null && note.trim().length() >= 1) {
       TaskNote taskNote = new TaskNote();
-      taskNote.setNote(taskRequest.getNote());
+      taskNote.setNote(taskCreateRequest.getNote());
       savedTask.addNote(taskNote);
       taskNoteRepository.save(taskNote);
     }
@@ -60,10 +63,47 @@ public class TaskServiceImpl implements TaskService {
   }
 
   @Override
+  public TaskLongResponse findTaskById(Long userId, Long taskListId) {
+    Task task = getTaskByUserAndId(userId, taskListId);
+    return new TaskLongResponse(task);
+  }
+
+  @Override
+  @Transactional
+  public void updateTaskById(Long userId, Long taskId, TaskUpdateRequest taskUpdateRequest) {
+    Task task = getTaskByUserAndId(userId, taskId);
+    if (taskUpdateRequest != null) {
+      if (taskUpdateRequest.getDeadline() != null) {
+        task.setDeadline(taskUpdateRequest.getDeadline());
+      }
+      if (taskUpdateRequest.getTitle() != null) {
+        task.setTitle(taskUpdateRequest.getTitle());
+      }
+      if (taskUpdateRequest.getNote() != null) {
+        if (task.getTaskNote() != null) {
+          task.getTaskNote().setNote(taskUpdateRequest.getNote());
+        } else {
+          TaskNote taskNote = new TaskNote();
+          taskNote.setNote(taskUpdateRequest.getNote());
+          task.addNote(taskNote);
+          taskNoteRepository.save(taskNote);
+        }
+      }
+    }
+  }
+
+  @Override
   @Transactional
   public void deleteTaskById(Long userId, Long taskId) {
     Task task = getTaskByUserAndId(userId, taskId);
     taskRepository.delete(task);
+  }
+
+  @Override
+  @Transactional
+  public void toggleTaskById(Long userId, Long taskId) {
+    Task task = getTaskByUserAndId(userId, taskId);
+    task.setDone(!task.getDone());
   }
 
   private Task getTaskByUserAndId(Long userId, Long id) {

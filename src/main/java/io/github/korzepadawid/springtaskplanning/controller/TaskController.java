@@ -1,7 +1,8 @@
 package io.github.korzepadawid.springtaskplanning.controller;
 
-import io.github.korzepadawid.springtaskplanning.dto.TaskRequest;
+import io.github.korzepadawid.springtaskplanning.dto.TaskCreateRequest;
 import io.github.korzepadawid.springtaskplanning.dto.TaskShortResponse;
+import io.github.korzepadawid.springtaskplanning.dto.TaskUpdateRequest;
 import io.github.korzepadawid.springtaskplanning.security.UserPrincipal;
 import io.github.korzepadawid.springtaskplanning.service.TaskService;
 import javax.validation.Valid;
@@ -32,9 +33,9 @@ public class TaskController {
   @PostMapping("/api/v1/task-lists/{taskListId}/tasks")
   public TaskShortResponse saveTask(
       @PathVariable Long taskListId,
-      @Valid @RequestBody TaskRequest taskRequest,
+      @Valid @RequestBody TaskCreateRequest taskCreateRequest,
       @ApiIgnore @AuthenticationPrincipal UserPrincipal userPrincipal) {
-    return taskService.saveTask(userPrincipal.getId(), taskListId, taskRequest);
+    return taskService.saveTask(userPrincipal.getId(), taskListId, taskCreateRequest);
   }
 
   @ResponseStatus(HttpStatus.OK)
@@ -51,19 +52,24 @@ public class TaskController {
 
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @PatchMapping("/api/v1/tasks/{taskId}")
-  public void toggleTaskById(@PathVariable Long taskId) {
-    throw new NotYetImplementedException();
+  public void toggleTaskById(
+      @PathVariable Long taskId, @ApiIgnore @AuthenticationPrincipal UserPrincipal userPrincipal) {
+    taskService.toggleTaskById(userPrincipal.getId(), taskId);
   }
 
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @PutMapping("/api/v1/tasks/{taskId}")
-  public void updateTaskById(@PathVariable Long taskId) {
-    throw new NotYetImplementedException();
+  public void updateTaskById(
+      @PathVariable Long taskId,
+      @Valid @RequestBody TaskUpdateRequest taskUpdateRequest,
+      @AuthenticationPrincipal UserPrincipal userPrincipal) {
+    taskService.updateTaskById(userPrincipal.getId(), taskId, taskUpdateRequest);
   }
 
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping("/api/v1/tasks/{taskId}")
-  public void deleteTaskById(@PathVariable Long taskId) {
-    throw new NotYetImplementedException();
+  public void deleteTaskById(
+      @PathVariable Long taskId, @ApiIgnore @AuthenticationPrincipal UserPrincipal userPrincipal) {
+    taskService.deleteTaskById(userPrincipal.getId(), taskId);
   }
 }
