@@ -2,13 +2,16 @@ package io.github.korzepadawid.springtaskplanning.service.impl;
 
 import io.github.korzepadawid.springtaskplanning.dto.TaskRequest;
 import io.github.korzepadawid.springtaskplanning.dto.TaskShortResponse;
+import io.github.korzepadawid.springtaskplanning.exception.ResourceNotFoundException;
 import io.github.korzepadawid.springtaskplanning.model.Task;
 import io.github.korzepadawid.springtaskplanning.model.TaskList;
 import io.github.korzepadawid.springtaskplanning.model.TaskNote;
+import io.github.korzepadawid.springtaskplanning.model.User;
 import io.github.korzepadawid.springtaskplanning.repository.TaskNoteRepository;
 import io.github.korzepadawid.springtaskplanning.repository.TaskRepository;
 import io.github.korzepadawid.springtaskplanning.service.TaskListService;
 import io.github.korzepadawid.springtaskplanning.service.TaskService;
+import io.github.korzepadawid.springtaskplanning.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,14 +21,17 @@ public class TaskServiceImpl implements TaskService {
   private final TaskListService taskListService;
   private final TaskRepository taskRepository;
   private final TaskNoteRepository taskNoteRepository;
+  private final UserService userService;
 
   public TaskServiceImpl(
       TaskListService taskListService,
       TaskRepository taskRepository,
-      TaskNoteRepository taskNoteRepository) {
+      TaskNoteRepository taskNoteRepository,
+      UserService userService) {
     this.taskListService = taskListService;
     this.taskRepository = taskRepository;
     this.taskNoteRepository = taskNoteRepository;
+    this.userService = userService;
   }
 
   @Override
@@ -51,5 +57,19 @@ public class TaskServiceImpl implements TaskService {
     }
 
     return new TaskShortResponse(savedTask);
+  }
+
+  @Override
+  @Transactional
+  public void deleteTaskById(Long userId, Long taskId) {
+    Task task = getTaskByUserAndId(userId, taskId);
+    taskRepository.delete(task);
+  }
+
+  private Task getTaskByUserAndId(Long userId, Long id) {
+    User user = userService.findUserById(userId);
+    return taskRepository
+        .findByUserAndId(user, id)
+        .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
   }
 }
