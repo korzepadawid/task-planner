@@ -14,6 +14,8 @@ import io.github.korzepadawid.springtaskplanning.repository.TaskRepository;
 import io.github.korzepadawid.springtaskplanning.service.TaskListService;
 import io.github.korzepadawid.springtaskplanning.service.TaskService;
 import io.github.korzepadawid.springtaskplanning.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,9 +65,20 @@ public class TaskServiceImpl implements TaskService {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public TaskLongResponse findTaskById(Long userId, Long taskListId) {
     Task task = getTaskByUserAndId(userId, taskListId);
     return new TaskLongResponse(task);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public Page<TaskShortResponse> findAllTasksByUserIdAndTaskListId(
+      Long userId, Long taskListId, Integer page) {
+    TaskList taskList = taskListService.findTaskListById(userId, taskListId);
+    return taskRepository
+        .findAllByTaskList(taskList, PageRequest.of(Math.max(0, page - 1), 5))
+        .map(TaskShortResponse::new);
   }
 
   @Override
