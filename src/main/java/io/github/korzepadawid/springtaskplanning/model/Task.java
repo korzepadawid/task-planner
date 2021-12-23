@@ -40,7 +40,9 @@ public class Task extends AbstractBaseEntity {
 
   @Embedded private final DateAudit dateAudit = new DateAudit();
 
-  public Task() {}
+  public Task() {
+    super();
+  }
 
   public void addNote(TaskNote taskNote) {
     this.taskNote = taskNote;

@@ -24,7 +24,9 @@ public class TaskNote extends AbstractBaseEntity {
 
   @Embedded private final DateAudit dateAudit = new DateAudit();
 
-  public TaskNote() {}
+  public TaskNote() {
+    super();
+  }
 
   public String getNote() {
     return note;

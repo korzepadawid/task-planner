@@ -31,7 +31,9 @@ public class TaskList extends AbstractBaseEntity {
 
   @Embedded private final DateAudit dateAudit = new DateAudit();
 
-  public TaskList() {}
+  public TaskList() {
+    super();
+  }
 
   public void addTaskToList(Task task) {
     task.setTaskList(this);

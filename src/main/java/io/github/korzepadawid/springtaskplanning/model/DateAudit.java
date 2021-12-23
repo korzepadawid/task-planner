@@ -11,6 +11,10 @@ public class DateAudit {
   private ZonedDateTime updatedAt;
   private ZonedDateTime createdAt;
 
+  public DateAudit() {
+    super();
+  }
+
   @PrePersist
   void prePersist() {
     createdAt = ZonedDateTime.now();

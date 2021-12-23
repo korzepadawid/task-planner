@@ -17,7 +17,9 @@ public class Avatar extends AbstractBaseEntity {
   @Size(max = 255)
   private String storageKey;
 
-  public Avatar() {}
+  public Avatar() {
+    super();
+  }
 
   public User getUser() {
     return user;

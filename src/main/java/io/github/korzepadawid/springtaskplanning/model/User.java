@@ -46,7 +46,9 @@ public class User extends AbstractBaseEntity {
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private final Set<TaskList> taskLists = new HashSet<>();
 
-  public User() {}
+  public User() {
+    super();
+  }
 
   public void addTaskList(TaskList taskList) {
     taskList.setUser(this);
