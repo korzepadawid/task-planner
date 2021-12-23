@@ -48,7 +48,7 @@ public class TaskListController {
   @ResponseStatus(HttpStatus.OK)
   public TaskListResponse findTaskListById(
       @PathVariable Long id, @ApiIgnore @AuthenticationPrincipal UserPrincipal userPrincipal) {
-    return new TaskListResponse(taskListService.findTaskListById(userPrincipal.getId(), id));
+    return taskListService.findTaskListById(userPrincipal.getId(), id);
   }
 
   @DeleteMapping("/{id}")

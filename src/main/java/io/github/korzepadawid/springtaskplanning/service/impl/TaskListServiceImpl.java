@@ -28,7 +28,7 @@ public class TaskListServiceImpl implements TaskListService {
   @Override
   @Transactional
   public TaskListResponse saveTaskList(Long userId, TaskListRequest taskListRequest) {
-    User user = userService.findUserById(userId);
+    User user = userService.getUserById(userId);
     taskListRepository
         .findByUserAndTitle(user, taskListRequest.getTitle())
         .ifPresent(
@@ -42,18 +42,23 @@ public class TaskListServiceImpl implements TaskListService {
   }
 
   @Override
-  @Transactional(readOnly = true)
-  public TaskList findTaskListById(Long userId, Long taskListId) {
-    User user = userService.findUserById(userId);
+  public TaskList getTaskListById(Long userId, Long taskListId) {
+    User user = userService.getUserById(userId);
     return taskListRepository
         .findByUserAndId(user, taskListId)
         .orElseThrow(() -> new ResourceNotFoundException("Task list not found"));
   }
 
   @Override
+  @Transactional(readOnly = true)
+  public TaskListResponse findTaskListById(Long userId, Long taskListId) {
+    return new TaskListResponse(getTaskListById(userId, taskListId));
+  }
+
+  @Override
   @Transactional
   public void deleteTaskListById(Long userId, Long taskListId) {
-    User user = userService.findUserById(userId);
+    User user = userService.getUserById(userId);
     if (taskListRepository.deleteByUserAndId(user, taskListId) == 0) {
       throw new ResourceNotFoundException("Task list not found");
     }
@@ -63,7 +68,7 @@ public class TaskListServiceImpl implements TaskListService {
   @Transactional
   public void updateTaskListById(Long userId, Long taskListId, TaskListRequest updates) {
     if (updates != null && updates.getTitle() != null) {
-      TaskList taskList = findTaskListById(userId, taskListId);
+      TaskList taskList = getTaskListById(userId, taskListId);
       taskList.setTitle(updates.getTitle());
     }
   }
@@ -71,7 +76,7 @@ public class TaskListServiceImpl implements TaskListService {
   @Override
   @Transactional(readOnly = true)
   public List<TaskListResponse> findAllTaskListsByUserId(Long userId) {
-    User user = userService.findUserById(userId);
+    User user = userService.getUserById(userId);
     return taskListRepository.findAllByUser(user).stream()
         .map(TaskListResponse::new)
         .collect(Collectors.toList());

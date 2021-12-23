@@ -53,7 +53,7 @@ class TaskServiceImplTest {
     TaskCreateRequest taskCreateRequest = TaskFactory.getTaskRequest("title");
     taskCreateRequest.setNote(null);
     Task task = TaskFactory.getTask(taskCreateRequest.getTitle(), false);
-    when(taskListService.findTaskListById(anyLong(), eq(taskList.getId()))).thenReturn(taskList);
+    when(taskListService.getTaskListById(anyLong(), eq(taskList.getId()))).thenReturn(taskList);
     when(taskRepository.save(any(Task.class))).thenReturn(task);
 
     TaskShortResponse result = taskService.saveTask(1L, taskList.getId(), taskCreateRequest);
@@ -70,7 +70,7 @@ class TaskServiceImplTest {
     TaskCreateRequest taskCreateRequest = TaskFactory.getTaskRequest("title");
     taskCreateRequest.setNote("      ");
     Task task = TaskFactory.getTask(taskCreateRequest.getTitle(), false);
-    when(taskListService.findTaskListById(anyLong(), eq(taskList.getId()))).thenReturn(taskList);
+    when(taskListService.getTaskListById(anyLong(), eq(taskList.getId()))).thenReturn(taskList);
     when(taskRepository.save(any(Task.class))).thenReturn(task);
 
     TaskShortResponse result = taskService.saveTask(1L, taskList.getId(), taskCreateRequest);
@@ -90,7 +90,7 @@ class TaskServiceImplTest {
     TaskNote taskNote = new TaskNote();
     taskNote.setTask(task);
     taskNote.setNote(taskCreateRequest.getNote());
-    when(taskListService.findTaskListById(anyLong(), eq(taskList.getId()))).thenReturn(taskList);
+    when(taskListService.getTaskListById(anyLong(), eq(taskList.getId()))).thenReturn(taskList);
     when(taskRepository.save(any(Task.class))).thenReturn(task);
     when(taskNoteRepository.save(any(TaskNote.class))).thenReturn(taskNote);
 
@@ -107,7 +107,7 @@ class TaskServiceImplTest {
   void shouldThrowResourceNotFoundExceptionWhenTaskDoesNotExist() {
     final Long taskId = 1L;
     User user = UserFactory.getUser(AuthProvider.LOCAL);
-    when(userService.findUserById(user.getId())).thenReturn(user);
+    when(userService.getUserById(user.getId())).thenReturn(user);
     when(taskRepository.findByUserAndId(any(User.class), eq(taskId))).thenReturn(Optional.empty());
 
     Throwable exception = catchThrowable(() -> taskService.deleteTaskById(user.getId(), taskId));
@@ -120,7 +120,7 @@ class TaskServiceImplTest {
   void shouldDeleteTaskWhenTaskExist() {
     User user = UserFactory.getUser(AuthProvider.LOCAL);
     Task task = TaskFactory.getTask("task", false);
-    when(userService.findUserById(user.getId())).thenReturn(user);
+    when(userService.getUserById(user.getId())).thenReturn(user);
     when(taskRepository.findByUserAndId(any(User.class), eq(task.getId())))
         .thenReturn(Optional.of(task));
 
@@ -133,7 +133,7 @@ class TaskServiceImplTest {
   void shouldChangeTaskStatusUndoneWhenDone() {
     User user = UserFactory.getUser(AuthProvider.LOCAL);
     Task task = TaskFactory.getTask("task", true);
-    when(userService.findUserById(user.getId())).thenReturn(user);
+    when(userService.getUserById(user.getId())).thenReturn(user);
     when(taskRepository.findByUserAndId(any(User.class), eq(task.getId())))
         .thenReturn(Optional.of(task));
 
@@ -146,7 +146,7 @@ class TaskServiceImplTest {
   void shouldChangeTaskStatusDoneWhenUndone() {
     User user = UserFactory.getUser(AuthProvider.LOCAL);
     Task task = TaskFactory.getTask("task", false);
-    when(userService.findUserById(user.getId())).thenReturn(user);
+    when(userService.getUserById(user.getId())).thenReturn(user);
     when(taskRepository.findByUserAndId(any(User.class), eq(task.getId())))
         .thenReturn(Optional.of(task));
 
@@ -162,7 +162,7 @@ class TaskServiceImplTest {
     task.setTaskNote(null);
     var taskTitle = task.getTitle();
     var taskDeadline = task.getDeadline();
-    when(userService.findUserById(user.getId())).thenReturn(user);
+    when(userService.getUserById(user.getId())).thenReturn(user);
     when(taskRepository.findByUserAndId(any(User.class), eq(task.getId())))
         .thenReturn(Optional.of(task));
 
@@ -181,7 +181,7 @@ class TaskServiceImplTest {
     taskUpdateRequest.setTitle("new title");
     task.setTaskNote(null);
     var taskDeadline = task.getDeadline();
-    when(userService.findUserById(user.getId())).thenReturn(user);
+    when(userService.getUserById(user.getId())).thenReturn(user);
     when(taskRepository.findByUserAndId(any(User.class), eq(task.getId())))
         .thenReturn(Optional.of(task));
 
@@ -200,7 +200,7 @@ class TaskServiceImplTest {
     taskUpdateRequest.setNote("x".repeat(20));
     TaskNote taskNote = new TaskNote();
     taskNote.setNote(taskUpdateRequest.getNote());
-    when(userService.findUserById(user.getId())).thenReturn(user);
+    when(userService.getUserById(user.getId())).thenReturn(user);
     when(taskRepository.findByUserAndId(any(User.class), eq(task.getId())))
         .thenReturn(Optional.of(task));
     when(taskNoteRepository.save(any(TaskNote.class))).thenReturn(taskNote);
@@ -220,7 +220,7 @@ class TaskServiceImplTest {
     taskUpdateRequest.setDeadline(ZonedDateTime.now().plusHours(5));
     taskUpdateRequest.setTitle("new title");
     taskUpdateRequest.setNote("x".repeat(20));
-    when(userService.findUserById(user.getId())).thenReturn(user);
+    when(userService.getUserById(user.getId())).thenReturn(user);
     when(taskRepository.findByUserAndId(any(User.class), eq(task.getId())))
         .thenReturn(Optional.of(task));
 
@@ -236,7 +236,7 @@ class TaskServiceImplTest {
   void shouldReturnTaskWhenNoteIsNull() {
     User user = UserFactory.getUser(AuthProvider.LOCAL);
     Task task = TaskFactory.getTask("task", true);
-    when(userService.findUserById(user.getId())).thenReturn(user);
+    when(userService.getUserById(user.getId())).thenReturn(user);
     when(taskRepository.findByUserAndId(any(User.class), eq(task.getId())))
         .thenReturn(Optional.of(task));
 
@@ -255,7 +255,7 @@ class TaskServiceImplTest {
     TaskNote taskNote = new TaskNote();
     taskNote.setNote("blahblahblah");
     task.addNote(taskNote);
-    when(userService.findUserById(user.getId())).thenReturn(user);
+    when(userService.getUserById(user.getId())).thenReturn(user);
     when(taskRepository.findByUserAndId(any(User.class), eq(task.getId())))
         .thenReturn(Optional.of(task));
 

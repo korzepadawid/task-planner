@@ -7,7 +7,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {
 
-  User findUserById(Long id);
+  User getUserById(Long id);
+
+  UserResponse findUserById(Long id);
 
   byte[] findAvatarByUserId(Long id);
 

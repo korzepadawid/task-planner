@@ -1,5 +1,6 @@
 package io.github.korzepadawid.springtaskplanning.service.impl;
 
+import io.github.korzepadawid.springtaskplanning.dto.UserResponse;
 import io.github.korzepadawid.springtaskplanning.exception.BusinessLogicException;
 import io.github.korzepadawid.springtaskplanning.exception.ResourceNotFoundException;
 import io.github.korzepadawid.springtaskplanning.model.AuthProvider;
@@ -33,8 +34,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  @Transactional(readOnly = true)
-  public User findUserById(Long id) {
+  public User getUserById(Long id) {
     return userRepository
         .findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("User not found."));
@@ -42,8 +42,14 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional(readOnly = true)
+  public UserResponse findUserById(Long id) {
+    return new UserResponse(getUserById(id));
+  }
+
+  @Override
+  @Transactional(readOnly = true)
   public byte[] findAvatarByUserId(Long id) {
-    User user = findUserById(id);
+    User user = getUserById(id);
     if (user.getAvatar() != null) {
       try {
         return storageService.downloadFile(user.getAvatar().getStorageKey());
@@ -61,7 +67,7 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public void setAvatar(Long id, MultipartFile file) {
-    User user = findUserById(id);
+    User user = getUserById(id);
     if (user.getAuthProvider().equals(AuthProvider.LOCAL)) {
       Avatar avatarToSave;
       if (user.getAvatar() != null) {

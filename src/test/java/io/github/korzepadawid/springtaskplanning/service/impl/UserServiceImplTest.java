@@ -40,7 +40,7 @@ class UserServiceImplTest {
   void shouldThrowResourceNotFoundExceptionWhenUserDoesNotExist() {
     when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-    Throwable exception = catchThrowable(() -> userService.findUserById(1L));
+    Throwable exception = catchThrowable(() -> userService.getUserById(1L));
 
     assertThat(exception).isInstanceOf(ResourceNotFoundException.class);
   }
@@ -50,7 +50,7 @@ class UserServiceImplTest {
     User user = UserFactory.getUser(AuthProvider.GOOGLE);
     when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
 
-    User result = userService.findUserById(user.getId());
+    User result = userService.getUserById(user.getId());
 
     assertThat(result).isNotNull().hasFieldOrPropertyWithValue("id", user.getId());
   }

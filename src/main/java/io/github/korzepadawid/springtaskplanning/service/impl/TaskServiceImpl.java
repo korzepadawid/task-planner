@@ -42,7 +42,7 @@ public class TaskServiceImpl implements TaskService {
   @Transactional
   public TaskShortResponse saveTask(
       Long userId, Long taskListId, TaskCreateRequest taskCreateRequest) {
-    TaskList taskList = taskListService.findTaskListById(userId, taskListId);
+    TaskList taskList = taskListService.getTaskListById(userId, taskListId);
 
     Task task = new Task();
     task.setTitle(taskCreateRequest.getTitle());
@@ -75,7 +75,7 @@ public class TaskServiceImpl implements TaskService {
   @Transactional(readOnly = true)
   public Page<TaskShortResponse> findAllTasksByUserIdAndTaskListId(
       Long userId, Long taskListId, Integer page) {
-    TaskList taskList = taskListService.findTaskListById(userId, taskListId);
+    TaskList taskList = taskListService.getTaskListById(userId, taskListId);
     return taskRepository
         .findAllByTaskList(taskList, PageRequest.of(Math.max(0, page - 1), 5))
         .map(TaskShortResponse::new);
@@ -120,7 +120,7 @@ public class TaskServiceImpl implements TaskService {
   }
 
   private Task getTaskByUserAndId(Long userId, Long id) {
-    User user = userService.findUserById(userId);
+    User user = userService.getUserById(userId);
     return taskRepository
         .findByUserAndId(user, id)
         .orElseThrow(() -> new ResourceNotFoundException("Task not found"));

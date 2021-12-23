@@ -9,7 +9,9 @@ public interface TaskListService {
 
   TaskListResponse saveTaskList(Long userId, TaskListRequest taskListRequest);
 
-  TaskList findTaskListById(Long userId, Long taskListId);
+  TaskList getTaskListById(Long userId, Long taskListId);
+
+  TaskListResponse findTaskListById(Long userId, Long taskListId);
 
   void deleteTaskListById(Long userId, Long taskListId);
 
