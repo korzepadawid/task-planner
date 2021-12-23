@@ -3,6 +3,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
     id 'jacoco'
+    id 'war'
 }
 
 group = 'io.github.korzepadawid'
@@ -42,6 +43,10 @@ jacocoTestReport {
         xml.enabled true
         html.enabled false
     }
+}
+
+war {
+    archiveName("taskapp.war")
 }
 
 test {
