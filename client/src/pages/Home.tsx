@@ -1,8 +1,9 @@
 import React from 'react';
+import LoginCard from '../components/LoginCard';
 
 const Home: React.FC = () => (
   <>
-    <h1>Home</h1>
+    <LoginCard />
   </>
 );
 
