@@ -9,36 +9,56 @@ import {
   Grid,
   TextField,
 } from '@mui/material';
+import axios from 'axios';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import { useDispatch } from 'react-redux';
+import { LOGIN_URL } from '../constants/urls';
+import { login } from '../store/actionCreators';
+
+interface FormInput {
+  email: string;
+  password: string;
+}
+
+const formSchema = yup
+  .object({
+    email: yup.string().email().trim().required(),
+    password: yup.string().trim().required(),
+  })
+  .required();
 
 const LoginCard: React.FC = () => {
+  const dispatch = useDispatch();
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit: VoidFunction = async () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormInput>({
+    resolver: yupResolver(formSchema),
+  });
+
+  const onSubmit = async (input: FormInput): Promise<void> => {
     setLoading(true);
-    const data = { email: 'string@email.com', password: 'string' };
-    const response = await fetch('http://localhost:8080/api/v1/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (response.status === 400 || response.status === 403) {
-      setError(true);
-    } else {
+    try {
+      const { data } = await axios.post(LOGIN_URL, {
+        ...input,
+      });
+      const { accessToken } = data;
       setError(false);
-      const { accessToken } = await response.json();
-      console.log(accessToken);
+      dispatch(login(accessToken));
+    } catch {
+      setError(true);
     }
-
     setLoading(false);
   };
 
   return (
-    <Card>
+    <Card component="form" onSubmit={handleSubmit(onSubmit)}>
       <CardContent>
         <Grid container spacing={3} direction="column" alignItems="center">
           <Grid item xs={12}>
@@ -55,6 +75,9 @@ const LoginCard: React.FC = () => {
           )}
           <Grid item xs={12}>
             <TextField
+              error={errors.email !== undefined}
+              {...register('email')}
+              helperText={errors.email?.message}
               fullWidth
               id="outlined-basic"
               label="Email"
@@ -64,6 +87,9 @@ const LoginCard: React.FC = () => {
           </Grid>
           <Grid item xs={12}>
             <TextField
+              error={errors.password !== undefined}
+              {...register('password')}
+              helperText={errors.password?.message}
               fullWidth
               id="outlined-basic"
               label="Password"
@@ -82,8 +108,9 @@ const LoginCard: React.FC = () => {
           >
             <Grid item>
               <LoadingButton
+                type="submit"
+                component="button"
                 variant="contained"
-                onClick={handleSubmit}
                 loading={loading}
               >
                 Login
