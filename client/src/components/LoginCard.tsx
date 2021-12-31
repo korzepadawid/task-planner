@@ -14,8 +14,10 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useDispatch } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 import { LOGIN_URL } from '../constants/urls';
 import { login } from '../store/actionCreators';
+import { useAuthStatus } from '../hooks/useAuthStatus';
 
 interface FormInput {
   email: string;
@@ -31,6 +33,7 @@ const formSchema = yup
 
 const LoginCard: React.FC = () => {
   const dispatch = useDispatch();
+  const isLogged = useAuthStatus();
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -56,6 +59,10 @@ const LoginCard: React.FC = () => {
     }
     setLoading(false);
   };
+
+  if (isLogged) {
+    return <Redirect to="/task-groups" />;
+  }
 
   return (
     <Card component="form" onSubmit={handleSubmit(onSubmit)}>

@@ -9,4 +9,4 @@ export const store: Store<AuthState, AuthActionType> = createStore(
   composeWithDevTools(applyMiddleware(thunk))
 );
 
-export type StoreType = typeof store;
+export type StoreType = ReturnType<typeof store.getState>;

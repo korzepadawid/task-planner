@@ -1,10 +1,10 @@
 import React from 'react';
 import LoginCard from '../components/LoginCard';
 
-const Home: React.FC = () => (
+const HomePage: React.FC = () => (
   <>
     <LoginCard />
   </>
 );
 
-export default Home;
+export default HomePage;

@@ -1,9 +1,9 @@
 import React from 'react';
 
-const Register: React.FC = () => (
+const RegisterPage: React.FC = () => (
   <>
     <h1>Register</h1>
   </>
 );
 
-export default Register;
+export default RegisterPage;
