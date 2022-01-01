@@ -1,12 +1,11 @@
-import { createStore, applyMiddleware, Store } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { authReducer } from './authReducer';
-import { AuthActionType, AuthState } from './storeTypes';
 
-export const store: Store<AuthState, AuthActionType> = createStore(
+export type MainState = ReturnType<typeof authReducer>;
+
+export const store = createStore(
   authReducer,
   composeWithDevTools(applyMiddleware(thunk))
 );
-
-export type StoreType = ReturnType<typeof store.getState>;

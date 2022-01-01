@@ -9,7 +9,7 @@ interface Props {
 const MainLayout: React.FC<Props> = ({ children }) => (
   <>
     <NavBar />
-    <Container maxWidth="sm">{children}</Container>
+    <Container maxWidth="md">{children}</Container>
   </>
 );
 

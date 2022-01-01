@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import { StoreType } from '../store';
+import { MainState } from '../store';
 
 export const useAuthStatus = (): boolean =>
-  useSelector((state: StoreType) => state.accessToken !== undefined);
+  useSelector((state: MainState) => state.accessToken !== undefined);

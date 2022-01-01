@@ -1,6 +1,6 @@
 import { AuthState, AuthActionType, AuthActionTypes } from './storeTypes';
 
-const initialAuthState: AuthState = {
+export const initialAuthState: AuthState = {
   accessToken: undefined,
   user: undefined,
   loggedAt: undefined,
