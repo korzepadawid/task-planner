@@ -6,7 +6,7 @@ import TaskListsTable from '../components/TaskListsTable';
 import { GET_TASK_LISTS_URL } from '../constants/urls';
 import { MainState } from '../store';
 
-const TaskGroupPage: React.FC = () => {
+const TaskListsPage: React.FC = () => {
   const [taskLists, setTaskLists] = useState([]);
   const [loading, setLoading] = useState(false);
   const { accessToken } = useSelector((state: MainState) => state);
@@ -44,4 +44,4 @@ const TaskGroupPage: React.FC = () => {
   );
 };
 
-export default TaskGroupPage;
+export default TaskListsPage;

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -11,11 +11,15 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
+import { useSelector } from 'react-redux';
+import { MainState } from '../store';
 
 const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 const NavBar: React.FC = () => {
+  const { user } = useSelector((state: MainState) => state);
+
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );
@@ -110,7 +114,14 @@ const NavBar: React.FC = () => {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar
+                  alt={user?.name.toUpperCase()}
+                  src={
+                    user?.avatarUrl !== null
+                      ? `http://localhost:8080/api/v1/users/${user?.id}/avatar`
+                      : '/static/images/avatar/2.jpg'
+                  }
+                />
               </IconButton>
             </Tooltip>
             <Menu
