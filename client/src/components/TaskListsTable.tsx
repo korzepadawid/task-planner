@@ -1,11 +1,14 @@
 import React from 'react';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
+import {
+  Table,
+  TableContainer,
+  TableHead,
+  Paper,
+  TableRow,
+  TableCell,
+  TableBody,
+  Button,
+} from '@mui/material';
 import { fromUnixToTodayDistance } from '../util/time';
 
 interface TaskList {
@@ -40,7 +43,11 @@ const TaskListsTable: React.FC<Props> = ({ taskLists }) => {
               key={taskList.id}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
-              <TableCell>{taskList.title}</TableCell>
+              <TableCell>
+                <Button size="small" href="#text-buttons">
+                  {taskList.title}
+                </Button>
+              </TableCell>
               <TableCell align="right">{taskList.undone}</TableCell>
               <TableCell align="right">{taskList.done}</TableCell>
               <TableCell align="right">{taskList.total}</TableCell>
