@@ -3,13 +3,31 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import TaskListsTable from '../components/TaskListsTable';
-import { GET_TASK_LISTS_URL } from '../constants/urls';
+import { DELETE_TASK_LIST_URL, GET_TASK_LISTS_URL } from '../constants/urls';
 import { MainState } from '../store';
+
+export interface TaskList {
+  id: number;
+  title: string;
+  createdAt: number;
+  undone: number;
+  done: number;
+  total: number;
+}
 
 const TaskListsPage: React.FC = () => {
   const [taskLists, setTaskLists] = useState([]);
   const [loading, setLoading] = useState(false);
   const { accessToken } = useSelector((state: MainState) => state);
+
+  const deleteTaskListById = async (id: number): Promise<void> => {
+    setTaskLists(taskLists.filter((taskList: TaskList) => taskList.id !== id));
+    await axios.delete(`${DELETE_TASK_LIST_URL}${id}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  };
 
   useEffect(() => {
     const fetchTaskGroups = async (): Promise<void> => {
@@ -39,7 +57,10 @@ const TaskListsPage: React.FC = () => {
       <Typography variant="h4" component="h1" gutterBottom>
         Your task lists.
       </Typography>
-      <TaskListsTable taskLists={taskLists} />
+      <TaskListsTable
+        taskLists={taskLists}
+        deleteTaskListById={deleteTaskListById}
+      />
     </>
   );
 };

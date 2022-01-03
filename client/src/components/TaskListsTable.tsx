@@ -8,10 +8,17 @@ import {
   TableCell,
   TableBody,
   Button,
+  IconButton,
 } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
 import { fromUnixToTodayDistance } from '../util/time';
+import { DELETE_TASK_LIST_URL } from '../constants/urls';
+import { MainState } from '../store';
 
-interface TaskList {
+export interface TaskList {
   id: number;
   title: string;
   createdAt: number;
@@ -22,19 +29,22 @@ interface TaskList {
 
 interface Props {
   taskLists: TaskList[];
+  deleteTaskListById: (id: number) => Promise<void>;
 }
 
-const TaskListsTable: React.FC<Props> = ({ taskLists }) => {
+const TaskListsTable: React.FC<Props> = ({ taskLists, deleteTaskListById }) => {
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
             <TableCell>Task list</TableCell>
-            <TableCell align="right">Undone</TableCell>
-            <TableCell align="right">Done</TableCell>
-            <TableCell align="right">total</TableCell>
-            <TableCell align="right">Created at</TableCell>
+            <TableCell align="center">Undone</TableCell>
+            <TableCell align="center">Done</TableCell>
+            <TableCell align="center">total</TableCell>
+            <TableCell align="center">Created at</TableCell>
+            <TableCell align="center">Remove</TableCell>
+            <TableCell align="center">Edit</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -48,11 +58,25 @@ const TaskListsTable: React.FC<Props> = ({ taskLists }) => {
                   {taskList.title}
                 </Button>
               </TableCell>
-              <TableCell align="right">{taskList.undone}</TableCell>
-              <TableCell align="right">{taskList.done}</TableCell>
-              <TableCell align="right">{taskList.total}</TableCell>
-              <TableCell align="right">
+              <TableCell align="center">{taskList.undone}</TableCell>
+              <TableCell align="center">{taskList.done}</TableCell>
+              <TableCell align="center">{taskList.total}</TableCell>
+              <TableCell align="center">
                 {fromUnixToTodayDistance(taskList.createdAt)}
+              </TableCell>
+              <TableCell align="center">
+                <IconButton
+                  aria-label="delete"
+                  color="primary"
+                  onClick={() => deleteTaskListById(taskList.id)}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </TableCell>
+              <TableCell align="center">
+                <IconButton aria-label="delete" color="primary">
+                  <EditIcon />
+                </IconButton>
               </TableCell>
             </TableRow>
           ))}
