@@ -61,7 +61,7 @@ const LoginCard: React.FC = () => {
   };
 
   if (isLogged) {
-    return <Redirect to="/task-groups" />;
+    return <Redirect to="/task-lists" />;
   }
 
   return (

@@ -12,11 +12,8 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { fromUnixToTodayDistance } from '../util/time';
-import { DELETE_TASK_LIST_URL } from '../constants/urls';
-import { MainState } from '../store';
 
 export interface TaskList {
   id: number;
@@ -55,7 +52,9 @@ const TaskListsTable: React.FC<Props> = ({ taskLists, deleteTaskListById }) => {
             >
               <TableCell>
                 <Button size="small" href="#text-buttons">
-                  {taskList.title}
+                  <Link to={`/task-lists/${taskList.id}?page=1`}>
+                    {taskList.title}
+                  </Link>
                 </Button>
               </TableCell>
               <TableCell align="center">{taskList.undone}</TableCell>

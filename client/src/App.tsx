@@ -5,7 +5,8 @@ import MainLayout from './layouts/MainLayout';
 import HomePage from './pages/Home';
 import NotFoundPage from './pages/NotFound';
 import RegisterPage from './pages/Register';
-import TaskListsPage from './pages/TaskListPage';
+import TaskListPage from './pages/TaskListPage';
+import TaskListsPage from './pages/TaskListsPage';
 import PrivateRoute from './security/PrivateRoute';
 import { store } from './store';
 
@@ -16,7 +17,8 @@ const App: React.FC = () => (
         <Switch>
           <Route exact path="/" component={HomePage} />
           <Route path="/register" component={RegisterPage} />
-          <PrivateRoute path="/task-groups" component={TaskListsPage} />
+          <PrivateRoute path="/task-lists/:id" component={TaskListPage} />
+          <PrivateRoute path="/task-lists" component={TaskListsPage} />
           <Route path="*" component={NotFoundPage} />
         </Switch>
       </BrowserRouter>
