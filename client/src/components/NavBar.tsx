@@ -14,7 +14,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { useSelector } from 'react-redux';
 import { MainState } from '../store';
 
-const pages = ['Products', 'Pricing', 'Blog'];
+const pages = [''];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 const NavBar: React.FC = () => {

@@ -52,7 +52,7 @@ const TaskListsTable: React.FC<Props> = ({ taskLists, deleteTaskListById }) => {
             >
               <TableCell>
                 <Button size="small" href="#text-buttons">
-                  <Link to={`/task-lists/${taskList.id}?page=1`}>
+                  <Link to={`/task-lists/${taskList.id}`}>
                     {taskList.title}
                   </Link>
                 </Button>
@@ -73,9 +73,11 @@ const TaskListsTable: React.FC<Props> = ({ taskLists, deleteTaskListById }) => {
                 </IconButton>
               </TableCell>
               <TableCell align="center">
-                <IconButton aria-label="delete" color="primary">
-                  <EditIcon />
-                </IconButton>
+                <Link to={`/task-lists/${taskList.id}/edit`}>
+                  <IconButton aria-label="delete" color="primary">
+                    <EditIcon />
+                  </IconButton>
+                </Link>
               </TableCell>
             </TableRow>
           ))}

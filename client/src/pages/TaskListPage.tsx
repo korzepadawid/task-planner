@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { CircularProgress, Typography } from '@mui/material';
+import Button from '@mui/material/Button';
 import { MainState } from '../store';
 import { GET_TASK_LIST_URL } from '../constants/urls';
 import { fromUnixToTodayDistance } from '../util/time';
+import TasksTable from '../components/TasksTable';
 
 interface Params {
   id: string;
@@ -88,6 +90,14 @@ const TaskListPage: React.FC = () => {
       <Typography variant="h6" component="h4" gutterBottom>
         {fromUnixToTodayDistance(taskList.createdAt)}
       </Typography>
+      <Button href="#text-buttons">
+        <Link to={`/list/${id}/new-task`}>NEW TASK</Link>
+      </Button>
+      {tasks.length === 0 ? (
+        <Typography>No data to show...</Typography>
+      ) : (
+        <TasksTable tasks={tasks} />
+      )}
     </>
   );
 };

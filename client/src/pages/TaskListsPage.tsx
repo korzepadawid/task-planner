@@ -1,7 +1,9 @@
 import { CircularProgress, Typography } from '@mui/material';
 import axios from 'axios';
+import Button from '@mui/material/Button';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import TaskListsTable from '../components/TaskListsTable';
 import { DELETE_TASK_LIST_URL, GET_TASK_LISTS_URL } from '../constants/urls';
 import { MainState } from '../store';
@@ -49,7 +51,14 @@ const TaskListsPage: React.FC = () => {
   }
 
   if (taskLists.length === 0) {
-    return <p>No data to show....</p>;
+    return (
+      <>
+        No data to show....
+        <Button href="#text-buttons">
+          <Link to="/new-task-list">NEW LIST</Link>
+        </Button>
+      </>
+    );
   }
 
   return (
@@ -57,6 +66,9 @@ const TaskListsPage: React.FC = () => {
       <Typography variant="h4" component="h1" gutterBottom>
         Your task lists.
       </Typography>
+      <Button href="#text-buttons">
+        <Link to="/new-task-list">NEW LIST</Link>
+      </Button>
       <TaskListsTable
         taskLists={taskLists}
         deleteTaskListById={deleteTaskListById}
