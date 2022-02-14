@@ -7,12 +7,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {
 
-  User getUserById(Long id);
+  User getUserById(Long userId);
 
-  UserResponse findUserById(Long id);
+  UserResponse findUserById(Long userId);
 
-  byte[] findAvatarByUserId(Long id);
+  byte[] findAvatarByUserId(Long userId);
 
-  void setAvatar(Long id, MultipartFile file) throws IOException;
-
+  void saveOrUpdateAvatarByUserId(Long userId, MultipartFile multipartFile) throws IOException;
 }

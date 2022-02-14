@@ -11,7 +11,9 @@ import io.github.korzepadawid.springtaskplanning.repository.UserRepository;
 import io.github.korzepadawid.springtaskplanning.service.StorageService;
 import io.github.korzepadawid.springtaskplanning.service.UserService;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,10 @@ public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
   private final AvatarRepository avatarRepository;
   private final StorageService storageService;
+
+  private static final int MAX_FILE_SIZE_IN_BYTES = 1000000;
+  private static final List<String> POSSIBLE_IMAGE_FILE_EXTENSIONS =
+      new ArrayList<>(Arrays.asList("png", "jpg", "jpeg"));
 
   public UserServiceImpl(
       UserRepository userRepository,
@@ -52,7 +58,7 @@ public class UserServiceImpl implements UserService {
     User user = getUserById(id);
     if (user.getAvatar() != null) {
       try {
-        return storageService.downloadFile(user.getAvatar().getStorageKey());
+        return storageService.downloadFileByStorageKey(user.getAvatar().getStorageKey());
       } catch (IOException e) {
         e.printStackTrace();
       }
@@ -66,26 +72,34 @@ public class UserServiceImpl implements UserService {
    */
   @Override
   @Transactional
-  public void setAvatar(Long id, MultipartFile file) {
-    User user = getUserById(id);
+  public void saveOrUpdateAvatarByUserId(Long userId, MultipartFile multipartFile) {
+    User user = getUserById(userId);
     if (user.getAuthProvider().equals(AuthProvider.LOCAL)) {
-      Avatar avatarToSave;
+      Avatar avatar;
       if (user.getAvatar() != null) {
-        avatarToSave = user.getAvatar();
+        avatar = user.getAvatar();
       } else {
-        Avatar avatar = new Avatar();
-        avatar.setStorageKey(UUID.randomUUID().toString());
-        avatar.setUser(user);
-        avatarToSave = avatarRepository.save(avatar);
+        Avatar newAvatar = createAvatarWithUser(user);
+        avatar = avatarRepository.save(newAvatar);
       }
       try {
         storageService.putFile(
-            file, Arrays.asList("png", "jpg", "jpeg"), 1000000, avatarToSave.getStorageKey());
+            multipartFile,
+            POSSIBLE_IMAGE_FILE_EXTENSIONS,
+            MAX_FILE_SIZE_IN_BYTES,
+            avatar.getStorageKey());
       } catch (IOException e) {
         e.printStackTrace();
       }
     } else {
       throw new BusinessLogicException("You can't change OAuth2 provider's avatar.");
     }
+  }
+
+  private Avatar createAvatarWithUser(User user) {
+    Avatar avatar = new Avatar();
+    avatar.setStorageKey(UUID.randomUUID().toString());
+    avatar.setUser(user);
+    return avatar;
   }
 }

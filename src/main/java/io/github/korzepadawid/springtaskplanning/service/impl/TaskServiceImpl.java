@@ -27,6 +27,9 @@ public class TaskServiceImpl implements TaskService {
   private final TaskNoteRepository taskNoteRepository;
   private final UserService userService;
 
+  private static final int DEFAULT_PER_PAGE_LIMIT = 5;
+  private static final int DEFAULT_FIRST_PAGE = 0;
+
   public TaskServiceImpl(
       TaskListService taskListService,
       TaskRepository taskRepository,
@@ -77,7 +80,9 @@ public class TaskServiceImpl implements TaskService {
       Long userId, Long taskListId, Integer page) {
     TaskList taskList = taskListService.getTaskListById(userId, taskListId);
     return taskRepository
-        .findAllByTaskList(taskList, PageRequest.of(Math.max(0, page - 1), 5))
+        .findAllByTaskList(
+            taskList,
+            PageRequest.of(Math.max(DEFAULT_FIRST_PAGE, page - 1), DEFAULT_PER_PAGE_LIMIT))
         .map(TaskShortResponse::new);
   }
 

@@ -13,5 +13,5 @@ public interface StorageService {
       String storageKey)
       throws IOException;
 
-  byte[] downloadFile(String storageKey) throws IOException;
+  byte[] downloadFileByStorageKey(String storageKey) throws IOException;
 }

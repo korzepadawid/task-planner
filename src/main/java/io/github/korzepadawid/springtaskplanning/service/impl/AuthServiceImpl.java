@@ -47,16 +47,8 @@ public class AuthServiceImpl implements AuthService {
             user -> {
               throw new UserAlreadyExistsException(user);
             });
-
-    User user = new User();
-
-    user.setName(authRegisterRequest.getName());
-    user.setEmail(authRegisterRequest.getEmail());
-    user.setAuthProvider(AuthProvider.LOCAL);
-    user.setPassword(passwordEncoder.encode(authRegisterRequest.getPassword()));
-
+    User user = mapRegisterRequestToEntity(authRegisterRequest);
     User savedUser = userRepository.save(user);
-
     return new UserResponse(savedUser);
   }
 
@@ -70,9 +62,16 @@ public class AuthServiceImpl implements AuthService {
 
     UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
     SecurityContextHolder.getContext().setAuthentication(authentication);
-
     String jwt = jwtProvider.generateToken(userPrincipal);
-
     return new AuthLoginResponse(jwt);
+  }
+
+  private User mapRegisterRequestToEntity(AuthRegisterRequest authRegisterRequest) {
+    User user = new User();
+    user.setName(authRegisterRequest.getName());
+    user.setEmail(authRegisterRequest.getEmail());
+    user.setAuthProvider(AuthProvider.LOCAL);
+    user.setPassword(passwordEncoder.encode(authRegisterRequest.getPassword()));
+    return user;
   }
 }

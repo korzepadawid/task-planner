@@ -16,6 +16,8 @@ public class JwtProviderImpl implements JwtProvider {
 
   private final JwtConfig jwtConfig;
 
+  private static final int SECOND_IN_MILLIS = 1000;
+
   Logger log = LoggerFactory.getLogger(JwtProviderImpl.class);
 
   public JwtProviderImpl(JwtConfig jwtConfig) {
@@ -25,7 +27,8 @@ public class JwtProviderImpl implements JwtProvider {
   @Override
   public String generateToken(UserPrincipal userPrincipal) {
     long expiringAt =
-        System.currentTimeMillis() + jwtConfig.getAccessTokenExpirationInSeconds() * 1000;
+        System.currentTimeMillis()
+            + jwtConfig.getAccessTokenExpirationInSeconds() * SECOND_IN_MILLIS;
     Algorithm algorithm = Algorithm.HMAC256(jwtConfig.getSecret());
 
     return JWT.create()

@@ -43,7 +43,7 @@ public class UserController {
       @ApiIgnore @AuthenticationPrincipal UserPrincipal userPrincipal,
       @RequestPart("file") MultipartFile multipartFile)
       throws IOException {
-    userService.setAvatar(userPrincipal.getId(), multipartFile);
+    userService.saveOrUpdateAvatarByUserId(userPrincipal.getId(), multipartFile);
   }
 
   @ResponseStatus(HttpStatus.OK)

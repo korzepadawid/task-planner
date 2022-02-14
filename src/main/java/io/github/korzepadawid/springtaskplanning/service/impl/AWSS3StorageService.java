@@ -27,19 +27,19 @@ public class AWSS3StorageService implements StorageService {
   private final AWSS3Config s3Config;
   private final AmazonS3 s3;
 
-  public AWSS3StorageService(AWSS3Config s3Config, AmazonS3 s3) {
-    this.s3Config = s3Config;
+  public AWSS3StorageService(AWSS3Config awss3Config, AmazonS3 s3) {
+    this.s3Config = awss3Config;
     this.s3 = s3;
   }
 
   @Override
   public void putFile(
       MultipartFile multipartFile,
-      Collection<String> extensions,
+      Collection<String> possibleExtensions,
       int maxLimitInBytes,
       String storageKey) {
 
-    if (!isValidExtension(multipartFile, extensions)) {
+    if (!isValidExtension(multipartFile, possibleExtensions)) {
       throw new StorageException("File extension doesn't supported.");
     }
 
@@ -58,7 +58,7 @@ public class AWSS3StorageService implements StorageService {
   }
 
   @Override
-  public byte[] downloadFile(String storageKey) {
+  public byte[] downloadFileByStorageKey(String storageKey) {
     try {
       S3Object s3Object = s3.getObject(s3Config.getBucketName(), storageKey);
       S3ObjectInputStream inputStream = s3Object.getObjectContent();
@@ -75,8 +75,8 @@ public class AWSS3StorageService implements StorageService {
     return file.length() <= maxLimitInBytes;
   }
 
-  private Boolean isValidExtension(MultipartFile multipartFile, Collection<String> extensions) {
-    return extensions.stream()
+  private Boolean isValidExtension(MultipartFile multipartFile, Collection<String> possibleExtensions) {
+    return possibleExtensions.stream()
         .anyMatch(
             extension -> {
               if (!multipartFile.isEmpty()) {

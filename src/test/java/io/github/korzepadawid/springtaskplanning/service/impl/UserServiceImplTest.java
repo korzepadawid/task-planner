@@ -59,7 +59,7 @@ class UserServiceImplTest {
   void shouldThrowResourceNotFoundExceptionWhenUserDoesNotExistAndStopUpdatingAvatar() {
     when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-    Throwable exception = catchThrowable(() -> userService.setAvatar(1L, null));
+    Throwable exception = catchThrowable(() -> userService.saveOrUpdateAvatarByUserId(1L, null));
 
     assertThat(exception).isInstanceOf(ResourceNotFoundException.class);
   }
@@ -69,7 +69,7 @@ class UserServiceImplTest {
     User user = UserFactory.getUser(AuthProvider.GOOGLE);
     when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
 
-    Throwable exception = catchThrowable(() -> userService.setAvatar(user.getId(), null));
+    Throwable exception = catchThrowable(() -> userService.saveOrUpdateAvatarByUserId(user.getId(), null));
 
     assertThat(exception).isInstanceOf(BusinessLogicException.class);
   }
@@ -82,7 +82,7 @@ class UserServiceImplTest {
     when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
     when(avatarRepository.save(any())).thenReturn(avatar);
 
-    userService.setAvatar(user.getId(), null);
+    userService.saveOrUpdateAvatarByUserId(user.getId(), null);
 
     verify(userRepository, times(1)).findById(anyLong());
     verify(avatarRepository, times(1)).save(any());
@@ -95,7 +95,7 @@ class UserServiceImplTest {
     user.setAvatar(avatar);
     when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
 
-    userService.setAvatar(user.getId(), null);
+    userService.saveOrUpdateAvatarByUserId(user.getId(), null);
 
     verify(userRepository, times(1)).findById(anyLong());
     verify(avatarRepository, times(0)).save(any());
@@ -127,7 +127,7 @@ class UserServiceImplTest {
     Avatar avatar = AvatarFactory.getAvatar();
     user.setAvatar(avatar);
     when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-    when(storageService.downloadFile(anyString())).thenReturn(new byte[10]);
+    when(storageService.downloadFileByStorageKey(anyString())).thenReturn(new byte[10]);
 
     byte[] result = userService.findAvatarByUserId(1L);
 

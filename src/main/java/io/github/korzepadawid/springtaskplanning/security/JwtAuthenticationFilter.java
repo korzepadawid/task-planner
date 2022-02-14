@@ -23,6 +23,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private final JwtProvider jwtProvider;
   private final UserDetailsService userDetailsService;
 
+  private static final String HTTP_AUTHORIZATION_HEADER = "Authorization";
+  private static final String BEARER_TOKEN_PREFIX = "Bearer ";
+  private static final int BEARER_TOKEN_PREFIX_LENGTH = 7;
+
   public JwtAuthenticationFilter(JwtProvider jwtProvider, UserDetailsService userDetailsService) {
     this.jwtProvider = jwtProvider;
     this.userDetailsService = userDetailsService;
@@ -50,10 +54,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   }
 
   private String getJwtFromHeader(HttpServletRequest httpServletRequest) {
-    String authorizationHeader = httpServletRequest.getHeader("Authorization");
+    String authorizationHeader = httpServletRequest.getHeader(HTTP_AUTHORIZATION_HEADER);
 
-    if (StringUtils.hasText(authorizationHeader) && authorizationHeader.startsWith("Bearer ")) {
-      return authorizationHeader.substring(7);
+    if (StringUtils.hasText(authorizationHeader)
+        && authorizationHeader.startsWith(BEARER_TOKEN_PREFIX)) {
+      return authorizationHeader.substring(BEARER_TOKEN_PREFIX_LENGTH);
     }
 
     log.error("Can't extract jwt from request.");
