@@ -1,21 +1,11 @@
 package io.github.korzepadawid.springtaskplanning.model;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -101,22 +91,5 @@ public class User extends AbstractBaseEntity {
 
   public void setAvatar(Avatar avatar) {
     this.avatar = avatar;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    User user = (User) o;
-    return name.equals(user.name) && email.equals(user.email) && authProvider == user.authProvider;
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(name, email, authProvider);
   }
 }
