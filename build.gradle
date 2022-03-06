@@ -21,7 +21,7 @@ repositories {
 jar {
     manifest {
         attributes(
-                'Main-Class': 'io/github/korzepadawid/springtaskplanning/SpringTaskPlanningApplication.java'
+                'Main-Class': 'io.github.korzepadawid.springtaskplanning.SpringTaskPlanningApplication'
         )
     }
 }
