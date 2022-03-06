@@ -18,6 +18,14 @@ repositories {
     mavenCentral()
 }
 
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'io/github/korzepadawid/springtaskplanning/SpringTaskPlanningApplication.java'
+        )
+    }
+}
+
 dependencies {
     implementation 'io.springfox:springfox-swagger-ui:2.9.2'
     implementation 'io.springfox:springfox-boot-starter:3.0.0'
