@@ -22,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class AWSS3StorageService implements StorageService {
 
-  Logger log = LoggerFactory.getLogger(AWSS3StorageService.class);
+  private static final Logger log = LoggerFactory.getLogger(AWSS3StorageService.class);
 
   private final AWSS3Config s3Config;
   private final AmazonS3 s3;
@@ -75,7 +75,8 @@ public class AWSS3StorageService implements StorageService {
     return file.length() <= maxLimitInBytes;
   }
 
-  private Boolean isValidExtension(MultipartFile multipartFile, Collection<String> possibleExtensions) {
+  private Boolean isValidExtension(
+      MultipartFile multipartFile, Collection<String> possibleExtensions) {
     return possibleExtensions.stream()
         .anyMatch(
             extension -> {

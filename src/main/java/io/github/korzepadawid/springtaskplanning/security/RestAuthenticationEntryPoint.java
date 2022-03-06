@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-  Logger log = LoggerFactory.getLogger(RestAuthenticationEntryPoint.class);
+  private static final Logger log = LoggerFactory.getLogger(RestAuthenticationEntryPoint.class);
 
   @Override
   public void commence(

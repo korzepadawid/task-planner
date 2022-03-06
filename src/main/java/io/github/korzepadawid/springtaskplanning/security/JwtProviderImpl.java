@@ -18,7 +18,7 @@ public class JwtProviderImpl implements JwtProvider {
 
   private static final int SECOND_IN_MILLIS = 1000;
 
-  Logger log = LoggerFactory.getLogger(JwtProviderImpl.class);
+  private static final Logger log = LoggerFactory.getLogger(JwtProviderImpl.class);
 
   public JwtProviderImpl(JwtConfig jwtConfig) {
     this.jwtConfig = jwtConfig;
