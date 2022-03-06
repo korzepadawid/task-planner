@@ -9,7 +9,6 @@ public class UserResponse {
   private String name;
   private String email;
   private String avatarUrl;
-  private String authProvider;
   private ZonedDateTime memberSince;
 
   public UserResponse() {}
@@ -19,7 +18,6 @@ public class UserResponse {
       this.id = user.getId();
       this.name = user.getName();
       this.email = user.getEmail();
-      this.authProvider = user.getAuthProvider().toString();
       this.memberSince = user.getDateAudit().getCreatedAt();
       if (user.getAvatar() == null) {
         this.avatarUrl = null;
@@ -51,14 +49,6 @@ public class UserResponse {
 
   public void setEmail(String email) {
     this.email = email;
-  }
-
-  public String getAuthProvider() {
-    return authProvider;
-  }
-
-  public void setAuthProvider(String authProvider) {
-    this.authProvider = authProvider;
   }
 
   public ZonedDateTime getMemberSince() {

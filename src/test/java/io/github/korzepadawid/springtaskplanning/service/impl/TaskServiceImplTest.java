@@ -14,7 +14,6 @@ import io.github.korzepadawid.springtaskplanning.dto.TaskLongResponse;
 import io.github.korzepadawid.springtaskplanning.dto.TaskShortResponse;
 import io.github.korzepadawid.springtaskplanning.dto.TaskUpdateRequest;
 import io.github.korzepadawid.springtaskplanning.exception.ResourceNotFoundException;
-import io.github.korzepadawid.springtaskplanning.model.AuthProvider;
 import io.github.korzepadawid.springtaskplanning.model.Task;
 import io.github.korzepadawid.springtaskplanning.model.TaskList;
 import io.github.korzepadawid.springtaskplanning.model.TaskNote;
@@ -106,7 +105,7 @@ class TaskServiceImplTest {
   @Test
   void shouldThrowResourceNotFoundExceptionWhenTaskDoesNotExist() {
     final Long taskId = 1L;
-    User user = UserFactory.getUser(AuthProvider.LOCAL);
+    User user = UserFactory.getUser();
     when(userService.getUserById(user.getId())).thenReturn(user);
     when(taskRepository.findByUserAndId(any(User.class), eq(taskId))).thenReturn(Optional.empty());
 
@@ -118,7 +117,7 @@ class TaskServiceImplTest {
 
   @Test
   void shouldDeleteTaskWhenTaskExist() {
-    User user = UserFactory.getUser(AuthProvider.LOCAL);
+    User user = UserFactory.getUser();
     Task task = TaskFactory.getTask("task", false);
     when(userService.getUserById(user.getId())).thenReturn(user);
     when(taskRepository.findByUserAndId(any(User.class), eq(task.getId())))
@@ -131,7 +130,7 @@ class TaskServiceImplTest {
 
   @Test
   void shouldChangeTaskStatusUndoneWhenDone() {
-    User user = UserFactory.getUser(AuthProvider.LOCAL);
+    User user = UserFactory.getUser();
     Task task = TaskFactory.getTask("task", true);
     when(userService.getUserById(user.getId())).thenReturn(user);
     when(taskRepository.findByUserAndId(any(User.class), eq(task.getId())))
@@ -144,7 +143,7 @@ class TaskServiceImplTest {
 
   @Test
   void shouldChangeTaskStatusDoneWhenUndone() {
-    User user = UserFactory.getUser(AuthProvider.LOCAL);
+    User user = UserFactory.getUser();
     Task task = TaskFactory.getTask("task", false);
     when(userService.getUserById(user.getId())).thenReturn(user);
     when(taskRepository.findByUserAndId(any(User.class), eq(task.getId())))
@@ -157,7 +156,7 @@ class TaskServiceImplTest {
 
   @Test
   void shouldNotThrowAnyExceptionWhenChangesAreNull() {
-    User user = UserFactory.getUser(AuthProvider.LOCAL);
+    User user = UserFactory.getUser();
     Task task = TaskFactory.getTask("task", true);
     task.setTaskNote(null);
     var taskTitle = task.getTitle();
@@ -175,7 +174,7 @@ class TaskServiceImplTest {
 
   @Test
   void shouldNotUpdateSinglePropertyWhenSinglePropertyIsNull() {
-    User user = UserFactory.getUser(AuthProvider.LOCAL);
+    User user = UserFactory.getUser();
     Task task = TaskFactory.getTask("task", true);
     TaskUpdateRequest taskUpdateRequest = new TaskUpdateRequest();
     taskUpdateRequest.setTitle("new title");
@@ -194,7 +193,7 @@ class TaskServiceImplTest {
 
   @Test
   void shouldUpdateTaskNoteWhenTaskNotDoesNotExistPreviously() {
-    User user = UserFactory.getUser(AuthProvider.LOCAL);
+    User user = UserFactory.getUser();
     Task task = TaskFactory.getTask("task", true);
     TaskUpdateRequest taskUpdateRequest = new TaskUpdateRequest();
     taskUpdateRequest.setNote("x".repeat(20));
@@ -213,7 +212,7 @@ class TaskServiceImplTest {
 
   @Test
   void shouldUpdateAllPropertiesWhenChangesAreComplete() {
-    User user = UserFactory.getUser(AuthProvider.LOCAL);
+    User user = UserFactory.getUser();
     Task task = TaskFactory.getTask("task", true);
     task.setTaskNote(new TaskNote());
     TaskUpdateRequest taskUpdateRequest = new TaskUpdateRequest();
@@ -234,7 +233,7 @@ class TaskServiceImplTest {
 
   @Test
   void shouldReturnTaskWhenNoteIsNull() {
-    User user = UserFactory.getUser(AuthProvider.LOCAL);
+    User user = UserFactory.getUser();
     Task task = TaskFactory.getTask("task", true);
     when(userService.getUserById(user.getId())).thenReturn(user);
     when(taskRepository.findByUserAndId(any(User.class), eq(task.getId())))
@@ -250,7 +249,7 @@ class TaskServiceImplTest {
 
   @Test
   void shouldReturnTaskWhenNoteIsNotNull() {
-    User user = UserFactory.getUser(AuthProvider.LOCAL);
+    User user = UserFactory.getUser();
     Task task = TaskFactory.getTask("task", true);
     TaskNote taskNote = new TaskNote();
     taskNote.setNote("blahblahblah");

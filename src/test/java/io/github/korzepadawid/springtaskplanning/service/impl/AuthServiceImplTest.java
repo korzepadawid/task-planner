@@ -33,7 +33,7 @@ class AuthServiceImplTest {
   @Test
   void shouldThrowUserAlreadyExistsExceptionWhenUserAlreadyExists() {
     AuthRegisterRequest authRequestUser = UserFactory.getUserRegisterRequest();
-    User user = UserFactory.getUser(AuthProvider.GOOGLE);
+    User user = UserFactory.getUser();
     when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
 
     Throwable exception = catchThrowable(() -> authService.register(authRequestUser));
@@ -46,7 +46,7 @@ class AuthServiceImplTest {
   @Test
   void shouldRegisterNewUserWhenUserDoesNotExist() {
     AuthRegisterRequest authRequestUser = UserFactory.getUserRegisterRequest();
-    User user = UserFactory.getUser(AuthProvider.LOCAL);
+    User user = UserFactory.getUser();
     String hashedPassword = "Ha$h3dP@s5W0rD012";
     when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
     when(userRepository.save(any())).thenReturn(user);

@@ -9,9 +9,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import io.github.korzepadawid.springtaskplanning.exception.BusinessLogicException;
 import io.github.korzepadawid.springtaskplanning.exception.ResourceNotFoundException;
-import io.github.korzepadawid.springtaskplanning.model.AuthProvider;
 import io.github.korzepadawid.springtaskplanning.model.Avatar;
 import io.github.korzepadawid.springtaskplanning.model.User;
 import io.github.korzepadawid.springtaskplanning.repository.AvatarRepository;
@@ -47,7 +45,7 @@ class UserServiceImplTest {
 
   @Test
   void shouldReturnUserWhenUserExists() {
-    User user = UserFactory.getUser(AuthProvider.GOOGLE);
+    User user = UserFactory.getUser();
     when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
 
     User result = userService.getUserById(user.getId());
@@ -65,18 +63,8 @@ class UserServiceImplTest {
   }
 
   @Test
-  void shouldThrowBusinessLogicExceptionWhenUserUpdatesAvatarAndComesFromThirdPartyAuthProvider() {
-    User user = UserFactory.getUser(AuthProvider.GOOGLE);
-    when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-
-    Throwable exception = catchThrowable(() -> userService.saveOrUpdateAvatarByUserId(user.getId(), null));
-
-    assertThat(exception).isInstanceOf(BusinessLogicException.class);
-  }
-
-  @Test
   void shouldCreateNewAvatarWhenAvatarDoesNotExist() {
-    User user = UserFactory.getUser(AuthProvider.LOCAL);
+    User user = UserFactory.getUser();
     user.setAvatar(null);
     Avatar avatar = AvatarFactory.getAvatar();
     when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
@@ -90,7 +78,7 @@ class UserServiceImplTest {
 
   @Test
   void shouldNotCreateNewAvatarWhenAvatarExists() {
-    User user = UserFactory.getUser(AuthProvider.LOCAL);
+    User user = UserFactory.getUser();
     Avatar avatar = AvatarFactory.getAvatar();
     user.setAvatar(avatar);
     when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
@@ -112,7 +100,7 @@ class UserServiceImplTest {
 
   @Test
   void shouldThrowResourceNotFoundExceptionWhenAvatarDoesNotExist() {
-    User user = UserFactory.getUser(AuthProvider.LOCAL);
+    User user = UserFactory.getUser();
     user.setAvatar(null);
     when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
 
@@ -123,7 +111,7 @@ class UserServiceImplTest {
 
   @Test
   void shouldReturnPhotoInBytesWhenAvatarExists() throws IOException {
-    User user = UserFactory.getUser(AuthProvider.LOCAL);
+    User user = UserFactory.getUser();
     Avatar avatar = AvatarFactory.getAvatar();
     user.setAvatar(avatar);
     when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));

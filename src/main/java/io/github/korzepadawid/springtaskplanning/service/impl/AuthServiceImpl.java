@@ -70,7 +70,6 @@ public class AuthServiceImpl implements AuthService {
     User user = new User();
     user.setName(authRegisterRequest.getName());
     user.setEmail(authRegisterRequest.getEmail());
-    user.setAuthProvider(AuthProvider.LOCAL);
     user.setPassword(passwordEncoder.encode(authRegisterRequest.getPassword()));
     return user;
   }

@@ -5,10 +5,9 @@ import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-import io.github.korzepadawid.springtaskplanning.util.UserFactory;
-import io.github.korzepadawid.springtaskplanning.model.AuthProvider;
 import io.github.korzepadawid.springtaskplanning.model.User;
 import io.github.korzepadawid.springtaskplanning.repository.UserRepository;
+import io.github.korzepadawid.springtaskplanning.util.UserFactory;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,7 +36,7 @@ class CustomUserDetailsServiceTest {
 
   @Test
   void shouldReturnUserPrincipalWhenUserExists() {
-    User user = UserFactory.getUser(AuthProvider.LOCAL);
+    User user = UserFactory.getUser();
     when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
 
     UserDetails userDetails = customUserDetailsService.loadUserByUsername(user.getEmail());

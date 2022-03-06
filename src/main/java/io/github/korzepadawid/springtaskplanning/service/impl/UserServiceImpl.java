@@ -1,9 +1,7 @@
 package io.github.korzepadawid.springtaskplanning.service.impl;
 
 import io.github.korzepadawid.springtaskplanning.dto.UserResponse;
-import io.github.korzepadawid.springtaskplanning.exception.BusinessLogicException;
 import io.github.korzepadawid.springtaskplanning.exception.ResourceNotFoundException;
-import io.github.korzepadawid.springtaskplanning.model.AuthProvider;
 import io.github.korzepadawid.springtaskplanning.model.Avatar;
 import io.github.korzepadawid.springtaskplanning.model.User;
 import io.github.korzepadawid.springtaskplanning.repository.AvatarRepository;
@@ -66,33 +64,26 @@ public class UserServiceImpl implements UserService {
     throw new ResourceNotFoundException("Avatar not found");
   }
 
-  /**
-   * Changing the avatar feature is impossible for OAuth2 users. It checks if the avatar already
-   * exists, otherwise, it creates a new one.
-   */
   @Override
   @Transactional
   public void saveOrUpdateAvatarByUserId(Long userId, MultipartFile multipartFile) {
     User user = getUserById(userId);
-    if (user.getAuthProvider().equals(AuthProvider.LOCAL)) {
-      Avatar avatar;
-      if (user.getAvatar() != null) {
-        avatar = user.getAvatar();
-      } else {
-        Avatar newAvatar = createAvatarWithUser(user);
-        avatar = avatarRepository.save(newAvatar);
-      }
-      try {
-        storageService.putFile(
-            multipartFile,
-            POSSIBLE_IMAGE_FILE_EXTENSIONS,
-            MAX_FILE_SIZE_IN_BYTES,
-            avatar.getStorageKey());
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+    Avatar avatar;
+
+    if (user.getAvatar() != null) {
+      avatar = user.getAvatar();
     } else {
-      throw new BusinessLogicException("You can't change OAuth2 provider's avatar.");
+      Avatar newAvatar = createAvatarWithUser(user);
+      avatar = avatarRepository.save(newAvatar);
+    }
+    try {
+      storageService.putFile(
+          multipartFile,
+          POSSIBLE_IMAGE_FILE_EXTENSIONS,
+          MAX_FILE_SIZE_IN_BYTES,
+          avatar.getStorageKey());
+    } catch (IOException e) {
+      e.printStackTrace();
     }
   }
 

@@ -1,11 +1,18 @@
 package io.github.korzepadawid.springtaskplanning.model;
 
-import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -26,9 +33,6 @@ public class User extends AbstractBaseEntity {
   @NotBlank
   @Size(max = 72)
   private String password;
-
-  @Enumerated(EnumType.STRING)
-  private AuthProvider authProvider;
 
   @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
   private Avatar avatar;
@@ -67,14 +71,6 @@ public class User extends AbstractBaseEntity {
 
   public void setPassword(String password) {
     this.password = password;
-  }
-
-  public AuthProvider getAuthProvider() {
-    return authProvider;
-  }
-
-  public void setAuthProvider(AuthProvider authProvider) {
-    this.authProvider = authProvider;
   }
 
   public DateAudit getDateAudit() {

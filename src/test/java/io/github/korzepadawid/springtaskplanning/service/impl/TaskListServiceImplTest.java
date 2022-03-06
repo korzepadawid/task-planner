@@ -10,7 +10,6 @@ import static org.mockito.Mockito.when;
 import io.github.korzepadawid.springtaskplanning.dto.TaskListResponse;
 import io.github.korzepadawid.springtaskplanning.exception.BusinessLogicException;
 import io.github.korzepadawid.springtaskplanning.exception.ResourceNotFoundException;
-import io.github.korzepadawid.springtaskplanning.model.AuthProvider;
 import io.github.korzepadawid.springtaskplanning.model.TaskList;
 import io.github.korzepadawid.springtaskplanning.model.User;
 import io.github.korzepadawid.springtaskplanning.repository.TaskListRepository;
@@ -39,7 +38,7 @@ class TaskListServiceImplTest {
   @Test
   void shouldThrowBusinessLogicExceptionWhenTaskListTitleHasBeenAlreadyTaken() {
     final String taskListTitle = "cool title";
-    User user = UserFactory.getUser(AuthProvider.LOCAL);
+    User user = UserFactory.getUser();
     TaskList taskList = TaskListFactory.getTaskList(taskListTitle);
     when(userService.getUserById(anyLong())).thenReturn(user);
     when(taskListRepository.findByUserAndTitle(any(User.class), eq(taskListTitle)))
@@ -57,7 +56,8 @@ class TaskListServiceImplTest {
   @Test
   void shouldSaveTaskListWhenTaskListTitleHasNotBeenTakenYet() {
     final String taskListTitle = "cool title";
-    User user = UserFactory.getUser(AuthProvider.LOCAL);
+    User user = UserFactory.getUser();
+    ;
     TaskList taskList = TaskListFactory.getTaskList(taskListTitle);
     when(userService.getUserById(anyLong())).thenReturn(user);
     when(taskListRepository.findByUserAndTitle(any(User.class), eq(taskListTitle)))
@@ -81,7 +81,7 @@ class TaskListServiceImplTest {
   @Test
   void shouldThrowResourceNotFoundExceptionWhenTaskListDoesNotExist() {
     final Long taskListId = 2L;
-    User user = UserFactory.getUser(AuthProvider.LOCAL);
+    User user = UserFactory.getUser();
     when(userService.getUserById(anyLong())).thenReturn(user);
     when(taskListRepository.findByUserAndId(any(User.class), eq(taskListId)))
         .thenReturn(Optional.empty());
@@ -94,7 +94,7 @@ class TaskListServiceImplTest {
 
   @Test
   void shouldReturnTaskListWhenExists() {
-    User user = UserFactory.getUser(AuthProvider.LOCAL);
+    User user = UserFactory.getUser();
     TaskList taskList = TaskListFactory.getTaskList("ok");
     when(userService.getUserById(anyLong())).thenReturn(user);
     when(taskListRepository.findByUserAndId(any(User.class), eq(taskList.getId())))
@@ -108,7 +108,7 @@ class TaskListServiceImplTest {
   @Test
   void shouldThrowResourceNotFoundExceptionWhenCanNotDelete() {
     final Long taskListId = 2L;
-    User user = UserFactory.getUser(AuthProvider.LOCAL);
+    User user = UserFactory.getUser();
     when(userService.getUserById(anyLong())).thenReturn(user);
     when(taskListRepository.deleteByUserAndId(any(User.class), eq(taskListId))).thenReturn(0);
 
@@ -121,7 +121,7 @@ class TaskListServiceImplTest {
   @Test
   void shouldThrowResourceNotFoundExceptionWhenCanNotUpdate() {
     final Long taskListId = 2L;
-    User user = UserFactory.getUser(AuthProvider.LOCAL);
+    User user = UserFactory.getUser();
     when(userService.getUserById(anyLong())).thenReturn(user);
     when(taskListRepository.findByUserAndId(any(User.class), anyLong()))
         .thenReturn(Optional.empty());
@@ -139,7 +139,7 @@ class TaskListServiceImplTest {
   void shouldUpdateWhenTaskListExists() {
     final Long taskListId = 2L;
     final String newTaskListTitle = "new task list title";
-    User user = UserFactory.getUser(AuthProvider.LOCAL);
+    User user = UserFactory.getUser();
     TaskList taskList = TaskListFactory.getTaskList("task list");
     when(userService.getUserById(anyLong())).thenReturn(user);
     when(taskListRepository.findByUserAndId(any(User.class), anyLong()))
@@ -153,7 +153,7 @@ class TaskListServiceImplTest {
 
   @Test
   void shouldReturnEmptyResultWhenTaskListsDoNotExist() {
-    User user = UserFactory.getUser(AuthProvider.LOCAL);
+    User user = UserFactory.getUser();
     when(userService.getUserById(anyLong())).thenReturn(user);
     when(taskListRepository.findAllByUser(any(User.class))).thenReturn(Collections.emptyList());
 
@@ -164,7 +164,8 @@ class TaskListServiceImplTest {
 
   @Test
   void shouldReturnTaskListsWhenTheyExist() {
-    User user = UserFactory.getUser(AuthProvider.LOCAL);
+    User user = UserFactory.getUser();
+    ;
     List<TaskList> taskLists =
         Arrays.asList(
             TaskListFactory.getTaskList("a"),
