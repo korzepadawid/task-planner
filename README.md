@@ -1,13 +1,13 @@
 # Task Planner
 
 [![License: CC0-1.0](https://img.shields.io/badge/License-CC0%201.0-lightgrey.svg)](http://creativecommons.org/publicdomain/zero/1.0/)
-[![Build Status](https://app.travis-ci.com/korzepadawid/task-managment-system.svg?branch=master)](https://app.travis-ci.com/korzepadawid/task-managment-system)
+[![Build Status](https://app.travis-ci.com/korzepadawid/task-planner.svg?branch=master)](https://app.travis-ci.com/korzepadawid/task-planner)
 [![GitHub latest commit](https://badgen.net/github/last-commit/korzepadawid/task-planner)](https://GitHub.com/korzepadawid/task-planner/commit/)
 [![Docker](https://badgen.net/badge/icon/docker?icon=docker&label)](https://https://docker.com/)
 
 REST API for Task Planner web-app built with Spring Boot and Spring Security.
 
-[Live demo (Swagger)](https://spring-qa-service.herokuapp.com/swagger-ui.html)
+[Live demo (Swagger)](https://task-planner3.herokuapp.com/swagger-ui.html)
 
 > The project has been developed only for learning purposes.
 
@@ -15,10 +15,8 @@ REST API for Task Planner web-app built with Spring Boot and Spring Security.
 
 - [Technologies](#technologies)
 - [Features](#features)
-- [Architecture](#architecture)
 - [Swagger](#swagger)
     - [How to use JWT authentication?](#how-to-use-jwt-authentication)
-    - [How to use REST API?](#how-to-use-rest-api)
 - [Launch](#launch)
 - [License](#license)
 
@@ -45,9 +43,14 @@ This project built using Java 11 and the following tools:
 - Tasks must be assigned to a specific list.
 - Users can mark tasks as (un)done.
 - Tasks might have additional notes.
-- It also provides an HTTP Link header, that contains pagination details. e.g. ``fdhgjkdhgfh``
+- It also provides an HTTP Link header, that contains pagination details. e.g.
 
-## Architecture
+```
+link: <https://task-planner3.herokuapp.com/api/v1/task-lists/1/tasks?page=3>; rel="next"
+  ,<https://task-planner3.herokuapp.com/api/v1/task-lists/1/tasks?page=1>; rel="prev"
+  ,<https://task-planner3.herokuapp.com/api/v1/task-lists/1/tasks?page=3>; rel="last"
+  ,<https://task-planner3.herokuapp.com/api/v1/task-lists/1/tasks?page=1>; rel="first"
+- ```
 
 ## Swagger
 
@@ -55,7 +58,7 @@ This project built using Java 11 and the following tools:
 
 Please, make sure you've already created an account.
 
-![https://i.imgur.com/OgXflVS.gif](https://i.imgur.com/OgXflVS.gif)
+![https://imgur.com/IJyrvgX.gif](https://i.imgur.com/IJyrvgX.gif)
 
 - Send ``POST`` request to ``/api/v1/auth/login`` with your credentials
 - Copy received access token
@@ -63,39 +66,37 @@ Please, make sure you've already created an account.
 - Type ``Bearer PASTE_ACCESS_TOKEN_HERE``
 - You're ready to play with API!
 
-### How to use REST API?
-
-![https://i.imgur.com/xTz4oF2.png](https://i.imgur.com/xTz4oF2.png)
-
-It's fairly easy to understand, you will find more
-details [here (demo)](https://spring-qa-service.herokuapp.com/swagger-ui.html).
-
 ## Launch
 
 ### Prerequisites
+
+Please, create ``.env`` file.
+```
+JWT_CONFIG_SECRET=<VALUE>
+AWS_S3_ACCESS_KEY=<VALUE>
+AWS_S3_SECRET_KEY=<VALUE>
+AWS_S3_REGION=<VALUE e.g. eu-central-1>
+AWS_S3_BUCKET_NAME=<VALUE>
+```
 
 - Java 11 or newer (full JDK not a JRE).
 - Docker
 - docker-compose
 
 ```
-$ git clone https://github.com/korzepadawid/spring-qa-service.git
+$ git clone git@github.com:korzepadawid/task-planner.git
 ```
 
 ```
-$ cd spring-qa-service
+$ cd task-planner
 ```
 
 ```
-$ chmod +x mvnw
+$ ./gradlew build
 ```
 
 ```
-$ ./mvnw clean package
-```
-
-```
-$ docker-compose up
+$ docker-compose up --build
 ```
 
 ## License
